@@ -1,0 +1,9 @@
+extends layout
+
+block content
+    h1.
+        #{exercise.name}
+
+    form( method="post", action="#{exercise.name}/delete") 
+        input(name="_id", type="hidden", value="") 
+        input(id="delete", value="X", type="submit")

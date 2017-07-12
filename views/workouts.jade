@@ -1,0 +1,21 @@
+
+extends layout
+
+block content
+    h1.
+        Workouts
+    form(name="add-exercise-to-workout", method="post") 
+        div.input
+            span.label Workout Name
+            input(type="text", name="workoutName", value="#{workoutName}")
+        div.input
+            span.label Exercise Name
+            input(type="text", name="exerciseName")
+        div.input
+            span.label Sets
+            input(type="text", name="sets")
+        div.input
+            span.label Reps
+            input(type="text", name="reps")
+        div.actions
+            input(type="submit", value="add")
