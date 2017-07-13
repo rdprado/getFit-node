@@ -1,12 +1,12 @@
-var WorkoutController = function WorkoutController(router, workoutUseCaseInteractor){
+var WorkoutsController = function WorkoutsController(router, workoutsUseCaseInteractor){
     this.router = router;
     this.makeRouts = makeRouts;
-    this.workoutUseCaseInteractor = workoutUseCaseInteractor;
+    this.workoutsUseCaseInteractor = workoutsUseCaseInteractor;
 
-    this.makeRouts(this.router, workoutUseCaseInteractor);
+    this.makeRouts(this.router, workoutsUseCaseInteractor);
 }
 
-function makeRouts(router, workoutUseCaseInteractor)
+function makeRouts(router, workoutsUseCaseInteractor)
 {
     router.get('/workouts', function(req, res, next) {
         res.render('workouts', {
@@ -21,9 +21,9 @@ function makeRouts(router, workoutUseCaseInteractor)
             comments: "easy"
         }
 
-        workoutUseCaseInteractor.addWorkout(requestModel);
+        workoutsUseCaseInteractor.addWorkout(requestModel);
         res.send('Post page');
     });
 }
 
-module.exports = WorkoutController;
+module.exports = WorkoutsController;
