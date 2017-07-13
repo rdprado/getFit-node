@@ -9,9 +9,8 @@ var mongo = require('mongodb');
 var monk  = require('monk');
 var db = monk('localhost:27017/mydb')
 
-var index = require('./routes/index');
-
 var app = express();
+
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -25,13 +24,21 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
-app.use(function(req, res, next){
-    // req.db = db;
-    next();
+var router = express.Router();
+/* GET home page. */
+router.get('/', function(req, res, next) {
+    res.render('index', { title: 'Express' });
 });
 
-app.use('/', index);
+/* GET hello page. */
+router.get('/helloworld', function(req, res, next) {
+    res.render('helloworld', { title: 'Hello, World!' });
+});
+
+var injector = require('./injector')
+injector.inject(router);
+
+app.use('/', router);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

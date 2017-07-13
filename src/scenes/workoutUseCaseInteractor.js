@@ -1,10 +1,10 @@
 var Workout = require('../entities/workout')
 
-var AddWorkoutUseCase = function(workoutRepository) {
+var WorkoutUseCaseInteractor = function(workoutRepository) {
     this.workoutRepository = workoutRepository;
 };
 
-AddWorkoutUseCase.prototype.addWorkout = function(requestModel) {
+WorkoutUseCaseInteractor.prototype.addWorkout = function(requestModel) {
     console.log("use case workout added");
     var workout = buildWorkoutFromRequest(requestModel);
     this.workoutRepository.addWorkout(workout);
@@ -15,4 +15,4 @@ function buildWorkoutFromRequest(requestModel) {
     return workout;
 }
 
-module.exports = AddWorkoutUseCase;
+module.exports = WorkoutUseCaseInteractor;
