@@ -6,11 +6,24 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var mongo = require('mongodb');
-var monk  = require('monk');
-var db = monk('localhost:27017/mydb')
+
+var MongoClient = require('mongodb').MongoClient
+  , assert = require('assert');
+
+// Connection URL
+var url = 'mongodb://localhost:27017/mydb';
+
+var router = express.Router();
+
+// Use connect method to connect to the server
+MongoClient.connect(url, function(err, db) {
+  assert.equal(null, err);
+
+  var injector = require('./injector')
+  injector.inject(router, db);
+});
 
 var app = express();
-
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -24,7 +37,6 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-var router = express.Router();
 /* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('index', { title: 'Express' });
@@ -35,8 +47,6 @@ router.get('/helloworld', function(req, res, next) {
     res.render('helloworld', { title: 'Hello, World!' });
 });
 
-var injector = require('./injector')
-injector.inject(router);
 
 app.use('/', router);
 

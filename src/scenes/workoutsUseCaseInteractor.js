@@ -5,9 +5,14 @@ var WorkoutsUseCaseInteractor = function(workoutRepository) {
 };
 
 WorkoutsUseCaseInteractor.prototype.addWorkout = function(requestModel) {
-    console.log("use case workout added");
     var workout = buildWorkoutFromRequest(requestModel);
     this.workoutRepository.addWorkout(workout);
+}
+
+WorkoutsUseCaseInteractor.prototype.getWorkouts = function(cb) {
+    console.log("workouts use case get")
+    var responseModel = this.workoutRepository.fetchWorkouts(cb);
+    return responseModel; 
 }
 
 function buildWorkoutFromRequest(requestModel) {

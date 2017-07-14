@@ -9,9 +9,15 @@ var WorkoutsController = function WorkoutsController(router, workoutsUseCaseInte
 function makeRouts(router, workoutsUseCaseInteractor)
 {
     router.get('/workouts', function(req, res, next) {
-        res.render('workouts', {
-            workoutName:'Free Workout'
-        });
+
+        console.log("workouts get route")
+
+        var cb = function(workouts){  
+            res.render('workouts', {'workouts': workouts})
+        }
+
+        workoutsUseCaseInteractor.getWorkouts(cb)
+
     });
 
     router.post('/workouts', function(req, res, next) {
