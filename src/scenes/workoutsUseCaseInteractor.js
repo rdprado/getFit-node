@@ -16,9 +16,11 @@ var WorkoutsUseCaseInteractor = function(workoutRepository) {
     function doGetWorkouts(done){
         console.log("workouts use case get")
 
+        // this is redundant
         var cb = function(docs) {
             var workouts = docs;
             done(workouts);
+            // but here is where I would call a presenter
         };
 
         var responseModel = workoutRepository.fetchWorkouts(cb);
@@ -26,7 +28,8 @@ var WorkoutsUseCaseInteractor = function(workoutRepository) {
     };
 
     function buildWorkoutFromRequest(requestModel){
-        var workout = new Workout(requestModel.date, requestModel.title, requestModel.comments);
+        var workout = Workout();
+        workout.init(requestModel.date, requestModel.title, requestModel.comments);
         return workout;
     };
 

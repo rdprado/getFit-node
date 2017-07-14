@@ -9,7 +9,7 @@ var WorkoutRepositoryMongoDB = function() {
 
     function doAddWorkout(workout, done) {
 
-        var doc = {date: workout.date, title: workout.title, comments: workout.comments};
+        var doc = {date: workout.getDate(), title: workout.getTitle(), comments: workout.getComments()};
 
         database.collection(COLLECTION_NAME, {strict:true}, function(err, col) {
             if(!err){
