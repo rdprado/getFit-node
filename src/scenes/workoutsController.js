@@ -12,11 +12,11 @@ function makeRouts(router, workoutsUseCaseInteractor)
 
         console.log("workouts get route")
 
-        var cb = function(workouts){  
+        var done = function(workouts){  
             res.render('workouts', {'workouts': workouts})
         }
 
-        workoutsUseCaseInteractor.getWorkouts(cb)
+        workoutsUseCaseInteractor.getWorkouts(done)
 
     });
 
