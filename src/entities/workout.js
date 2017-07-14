@@ -1,23 +1,23 @@
 var Workout = function (date, title, comments) {
 
-    var _date, _title, _comments;
+    var datePerformed, workoutTitle, workoutComments;
 
     function doInit(date, title, comments) {
-        _date = date;
-        _title = title;
-        _comments = comments;
+        datePerformed = date;
+        workoutTitle = title;
+        workoutComments = comments;
     };
 
     function doGetDate() {
-        return _date;
+        return datePerformed;
     };
 
     function doGetTitle() {
-        return _title;
+        return workoutTitle;
     };
 
     function doGetComments() {
-        return _comments;
+        return workoutComments;
     };
 
     var publicAPI = {
