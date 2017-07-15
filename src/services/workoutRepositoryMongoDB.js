@@ -21,8 +21,8 @@ var WorkoutRepositoryMongoDB = function() {
                 database.createCollection(COLLECTION_NAME).then(function(err, result) {
                     database.collection(COLLECTION_NAME, {strict:true}, function(err, col1) {
                         col1.insertOne(doc, function (err, result) {
-                            done();
                             console.log('created collections and inserted: ' + result.insertedCount);
+                            done();
                         });
                     });
                 });

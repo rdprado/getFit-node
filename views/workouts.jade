@@ -5,12 +5,20 @@ block content
         Workouts
     form(name="add-exercise-to-workout", method="post") 
         div.input
+            span.label Workout Date
+            input(type="text", name="date")
+        div.input
             span.label Workout Title
             input(type="text", name="title")
+        div.input
+            span.label Workout Comments
+            input(type="text", name="comments")
         div.actions
             input(type="submit", value="add")
 
     ul
         each workout, i in workouts
-            li
-                a(href="")= workout.title
+            li= workout.date
+            li= workout.title
+            li= workout.comments
+            br

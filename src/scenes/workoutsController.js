@@ -1,35 +1,48 @@
-var WorkoutsController = function WorkoutsController(router, workoutsUseCaseInteractor){
-    this.router = router;
-    this.makeRouts = makeRouts;
-    this.workoutsUseCaseInteractor = workoutsUseCaseInteractor;
+// TODO: remove the fucking prototype shit!
 
-    this.makeRouts(this.router, workoutsUseCaseInteractor);
+var WorkoutsController = function WorkoutsController(){
+
+    var routMaker, workoutsuseCaseInteractor;
+
+    function doInit(router, useCaseInteractor) {
+        routMaker = router;
+        workoutsUseCaseInteractor = useCaseInteractor;
+
+        makeRouts(router, workoutsUseCaseInteractor);
+    }
+
+    function makeRouts(router, workoutsUseCaseInteractor)
+    {
+        router.get('/workouts', function(req, res, next) {
+
+            console.log("workouts get route")
+
+            var done = function(viewModel){  
+                res.render('workouts', {'workouts': viewModel.workouts})
+            }
+
+            workoutsUseCaseInteractor.getWorkouts(done)
+
+        });
+
+        router.post('/workouts', function(req, res, next) {
+            var requestModel = {
+                date: Date(),
+                title: "Running",
+                comments: "easy"
+            }
+
+            workoutsUseCaseInteractor.addWorkout(requestModel);
+            res.send('Post page');
+        });
+    }
+
+    var publicAPI = {
+        init: doInit
+    }
+
+    return publicAPI;
 }
 
-function makeRouts(router, workoutsUseCaseInteractor)
-{
-    router.get('/workouts', function(req, res, next) {
-
-        console.log("workouts get route")
-
-        var done = function(workouts){  
-            res.render('workouts', {'workouts': workouts})
-        }
-
-        workoutsUseCaseInteractor.getWorkouts(done)
-
-    });
-
-    router.post('/workouts', function(req, res, next) {
-        var requestModel = {
-            date: Date.now,
-            title: "Running",
-            comments: "easy"
-        }
-
-        workoutsUseCaseInteractor.addWorkout(requestModel);
-        res.send('Post page');
-    });
-}
 
 module.exports = WorkoutsController;

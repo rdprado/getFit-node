@@ -1,10 +1,12 @@
 var Workout = require('../entities/workout')
 
-var WorkoutsUseCaseInteractor = function(workoutRepository) {
+var WorkoutsUseCaseInteractor = function() {
     var workoutRepository;
+    var workoutsUseCaseInteractorOutput;
 
-    function doInit(workoutDAO){
-        workoutRepository = workoutDAO;
+    function doInit(workoutsRepository, useCaseInteractorOutput){
+        workoutRepository = workoutsRepository;
+        workoutsUseCaseInteractorOutput = useCaseInteractorOutput;
     };
 
     function doAddWorkout(requestModel){
@@ -16,15 +18,15 @@ var WorkoutsUseCaseInteractor = function(workoutRepository) {
     function doGetWorkouts(done){
         console.log("workouts use case get")
 
-        // this is redundant
-        var cb = function(docs) {
-            var workouts = docs;
-            done(workouts);
-            // but here is where I would call a presenter
+        var cb = function(workouts) {
+            var responseModel = {
+                workouts: workouts
+            }
+            var viewModel = workoutsUseCaseInteractorOutput.presentGetWorkouts(responseModel);
+            done(viewModel);
         };
 
-        var responseModel = workoutRepository.fetchWorkouts(cb);
-        return responseModel; 
+        var workouts = workoutRepository.fetchWorkouts(cb);
     };
 
     function buildWorkoutFromRequest(requestModel){
