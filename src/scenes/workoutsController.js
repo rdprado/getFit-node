@@ -14,13 +14,10 @@ var WorkoutsController = function WorkoutsController(){
     function makeRouts(router, workoutsUseCaseInteractor)
     {
         router.get('/workouts', function(req, res, next) {
-
             var done = function(viewModel){  
                 res.render('workouts', {'workouts': viewModel.workouts})
             }
-
             workoutsUseCaseInteractor.getWorkouts(done);
-
         });
 
         router.post('/workouts/add', function(req, res, next) {
