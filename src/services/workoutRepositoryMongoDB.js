@@ -9,7 +9,7 @@ var WorkoutRepositoryMongoDB = function() {
 
     function doAddWorkout(workout, done) {
 
-        var doc = {date: workout.getDate(), title: workout.getTitle(), comments: workout.getComments()};
+        var doc = {ID:workout.getID(), date: workout.getDate(), title: workout.getTitle(), comments: workout.getComments()};
 
         database.collection(COLLECTION_NAME, {strict:true}, function(err, col) {
             if(!err){
@@ -42,10 +42,24 @@ var WorkoutRepositoryMongoDB = function() {
         });
     }
 
+    function doRemoveWorkout(id, done) {
+        database.collection(COLLECTION_NAME, {strict:true}, function(err, col) {
+            if(!err){
+                col.deleteOne({ID: id}).then(function(result){
+                    done();
+                    console.log('removed: ' + result.deletedCount);
+                }).catch(function(err){
+                    console.log(err);
+                });
+            } 
+        });
+    }
+
     var publicAPI = {
         init: doInit,
         addWorkout: doAddWorkout,
-        fetchWorkouts: doFetchWorkouts 
+        fetchWorkouts: doFetchWorkouts,
+        removeWorkout: doRemoveWorkout
     };
 
     return publicAPI;

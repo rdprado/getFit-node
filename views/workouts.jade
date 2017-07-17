@@ -1,12 +1,20 @@
 extends layout
 
 block content
+    -  function day(date){return date.getDate()}
+    -  function month(date){return date.getMonth() + 1}
+    -  function year(date){return date.getFullYear()}
     h1.
         Workouts
-    form(name="add-exercise-to-workout", method="post") 
+    form(name="add-workout", method="post" action="workouts/add") 
         div.input
-            span.label Workout Date
-            input(type="text", name="date")
+            -  var date = new Date();
+            span.label Workout Date day:
+            input(type="text", name="dateDay" value=day(date))
+            span.label month:
+            input(type="text", name="dateMonth" value=month(date))
+            span.label year:
+            input(type="text", name="dateYear" value=year(date))
         div.input
             span.label Workout Title
             input(type="text", name="title")
@@ -18,7 +26,12 @@ block content
 
     ul
         each workout, i in workouts
+            li= workout.ID
             li= workout.date
             li= workout.title
             li= workout.comments
+            form(name="delete-workout", method="post", action="workouts/delete")
+                input(type="hidden", name="ID",  value=workout.ID)
+                input(type="submit", value="x")
+            br
             br

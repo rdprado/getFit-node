@@ -1,4 +1,5 @@
 var Workout = require('../entities/workout')
+var UUID = require('uuid/v1');
 
 var WorkoutsUseCaseInteractor = function() {
     var workoutRepository;
@@ -10,14 +11,11 @@ var WorkoutsUseCaseInteractor = function() {
     };
 
     function doAddWorkout(requestModel){
-        console.log("use case workout added");
         var workout = buildWorkoutFromRequest(requestModel);
         workoutRepository.addWorkout(workout, ()=>{});
     };
 
     function doGetWorkouts(done){
-        console.log("workouts use case get")
-
         var cb = function(workouts) {
             var responseModel = {
                 workouts: workouts
@@ -26,19 +24,24 @@ var WorkoutsUseCaseInteractor = function() {
             done(viewModel);
         };
 
-        var workouts = workoutRepository.fetchWorkouts(cb);
+        workoutRepository.fetchWorkouts(cb);
     };
+
+    function doRemoveWorkout(requestModel){
+        workoutRepository.removeWorkout(requestModel.ID, ()=>{})
+    }
 
     function buildWorkoutFromRequest(requestModel){
         var workout = Workout();
-        workout.init(requestModel.date, requestModel.title, requestModel.comments);
+        workout.init(UUID(), requestModel.date, requestModel.title, requestModel.comments);
         return workout;
     };
 
     var publicAPI = {
         init: doInit,
         addWorkout: doAddWorkout,
-        getWorkouts: doGetWorkouts
+        getWorkouts: doGetWorkouts,
+        removeWorkout: doRemoveWorkout
     };
 
     return publicAPI;

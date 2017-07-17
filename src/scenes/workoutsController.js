@@ -2,10 +2,10 @@
 
 var WorkoutsController = function WorkoutsController(){
 
-    var routMaker, workoutsuseCaseInteractor;
+    var routeMaker, workoutsuseCaseInteractor;
 
     function doInit(router, useCaseInteractor) {
-        routMaker = router;
+        routeMaker = router;
         workoutsUseCaseInteractor = useCaseInteractor;
 
         makeRouts(router, workoutsUseCaseInteractor);
@@ -15,25 +15,34 @@ var WorkoutsController = function WorkoutsController(){
     {
         router.get('/workouts', function(req, res, next) {
 
-            console.log("workouts get route")
-
             var done = function(viewModel){  
                 res.render('workouts', {'workouts': viewModel.workouts})
             }
 
-            workoutsUseCaseInteractor.getWorkouts(done)
+            workoutsUseCaseInteractor.getWorkouts(done);
 
         });
 
-        router.post('/workouts', function(req, res, next) {
+        router.post('/workouts/add', function(req, res, next) {
+
+            var date = new Date(Date.UTC(req.body.dateYear, req.body.dateMonth, req.body.dateDay));
+
             var requestModel = {
-                date: Date(),
-                title: "Running",
-                comments: "easy"
+                date: date,
+                title: req.body.title,
+                comments: req.body.comments
             }
 
             workoutsUseCaseInteractor.addWorkout(requestModel);
             res.send('Post page');
+        });
+
+        router.post('/workouts/delete', function(req, res, next){
+            var requestModel = {
+                ID: req.body.ID,
+            }
+            workoutsUseCaseInteractor.removeWorkout(requestModel);
+            res.send('Delete page');
         });
     }
 
