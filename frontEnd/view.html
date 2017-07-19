@@ -3,6 +3,8 @@
 
 <div id="my_view">
     <p>{{ someData  }}</p>
+	<p>{{ someData.car  }}</p>
+	<p>{{ someData.name  }}</p>
 </div>
 
 <script>
@@ -14,8 +16,8 @@ new Vue({
     },
     mounted: function() {
         {
-            this.$http.get('localhost:3000/vuetest').then(response => {
-                this.someData = response;
+            this.$http.get('http://localhost:3000/vuetest').then(response => {
+                this.someData = response.body;
                 console.log('sucess');
                 // success callback
             }, response => {

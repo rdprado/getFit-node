@@ -1,5 +1,3 @@
-// TODO: remove the fucking prototype shit!
-
 var WorkoutsController = function WorkoutsController(){
 
     var routeMaker, workoutsuseCaseInteractor;
@@ -15,7 +13,7 @@ var WorkoutsController = function WorkoutsController(){
     {
 
         router.get('/vuetest', function(req, res, next) {
-            res.json({car: "HAHAHAHA", name: "this is neve going to work"});
+            res.json({car: "HAHAHAHA", name: "this is Working, just need to create an http server to run vue htmls and install Allow-Control-Allow-Origin extension on chrome to allow cross origin requests"});
             console.log(res.json);
         });
 
@@ -48,11 +46,6 @@ var WorkoutsController = function WorkoutsController(){
             workoutsUseCaseInteractor.removeWorkout(requestModel);
             //res.send('Delete page');
         });
-
-        // // application -------------------------------------------------------------
-        // router.get('*', function(req, res) {
-        //     console.log(req);
-        // });
     }
 
     var publicAPI = {

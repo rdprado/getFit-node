@@ -11,7 +11,7 @@ var assert = require('assert');
 var app = express();
 var router = express.Router();
 
-app.set('views', path.join(__dirname, 'views'));
+//app.set('views', path.join(__dirname, 'views'));
 // app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
@@ -35,26 +35,19 @@ MongoClient.connect(url, function(err, database) {
 function start(db) {
     /* GET home page. */
     router.get('/', function(req, res, next) {
-        res.render('index', { title: 'Express' });
+        //res.render('index', { title: 'Express' });
     });
 
     /* GET hello page. */
     router.get('/helloworld', function(req, res, next) {
-        res.render('helloworld', { title: 'Hello, World!' });
+        //res.render('helloworld', { title: 'Hello, World!' });
     });
-
-
 
     // Custom routes
     var injector = require('./injector')
     injector.inject(router, db);
 
-   // router.get('*', function(req, res) {
-   //     res.sendFile('./frontEnd/view.html'); // load the single view file (angular will handle the page changes on the front-end)
-   // });
-
     app.use('/', router);
-
 
     // catch 404 and forward to error handler
     app.use(function(req, res, next) {
@@ -75,7 +68,5 @@ function start(db) {
     });
 }
 // view engine setup
-
-
 
 module.exports = app;
