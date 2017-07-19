@@ -13,9 +13,16 @@ var WorkoutsController = function WorkoutsController(){
 
     function makeRouts(router, workoutsUseCaseInteractor)
     {
+
+        router.get('/vuetest', function(req, res, next) {
+            res.json({car: "HAHAHAHA", name: "this is neve going to work"});
+            console.log(res.json);
+        });
+
         router.get('/workouts', function(req, res, next) {
             var done = function(viewModel){  
-                res.render('workouts', {'workouts': viewModel.workouts})
+                res.json(viewModel.workouts);
+                // res.render('workouts', {'workouts': viewModel.workouts})
             }
             workoutsUseCaseInteractor.getWorkouts(done);
         });
@@ -31,7 +38,7 @@ var WorkoutsController = function WorkoutsController(){
             }
 
             workoutsUseCaseInteractor.addWorkout(requestModel);
-            res.send('Post page');
+            //res.send('Post page');
         });
 
         router.post('/workouts/delete', function(req, res, next){
@@ -39,8 +46,13 @@ var WorkoutsController = function WorkoutsController(){
                 ID: req.body.ID,
             }
             workoutsUseCaseInteractor.removeWorkout(requestModel);
-            res.send('Delete page');
+            //res.send('Delete page');
         });
+
+        // // application -------------------------------------------------------------
+        // router.get('*', function(req, res) {
+        //     console.log(req);
+        // });
     }
 
     var publicAPI = {

@@ -1,0 +1,38 @@
+<script src="./node_modules/vue/dist/vue.js"></script>
+<script src="./node_modules/vue-resource/dist/vue-resource.js"></script>
+
+<div id="my_view">
+    <p>{{ someData  }}</p>
+</div>
+
+<script>
+
+new Vue({
+    el: '#my_view',
+    data: {
+        someData: 'init'
+    },
+    mounted: function() {
+        {
+            this.$http.get('localhost:3000/vuetest').then(response => {
+                this.someData = response;
+                console.log('sucess');
+                // success callback
+            }, response => {
+                console.log('error');
+                // error callback
+            });
+
+            // // GET /someUrl
+            // this.$http.get('http://httpbin.org/get').then(response => {
+            //     this.someData = response;
+            //     console.log('sucess');
+            //     // success callback
+            // }, response => {
+            //     console.log('error');
+            //     // error callback
+            // });
+        }
+    }
+})
+</script>
