@@ -2,9 +2,32 @@
 <script src="./node_modules/vue-resource/dist/vue-resource.js"></script>
 
 <div id="my_view">
-    <p>{{ someData  }}</p>
-	<p>{{ someData.car  }}</p>
-	<p>{{ someData.name  }}</p>
+
+    <div id="addWorkout">
+        <p> Add Workout </p>
+        <input v-model="dateMonth" placeholder="Month">
+        <input v-model="dateDay" placeholder="Day">
+        <input v-model="dateYear" placeholder="Year">
+        <br>
+        <input v-model="name" placeholder="Name">
+        <br>
+        <textarea v-model="comments" placeholder="Comments"></textarea>
+        <br>
+        <button v-on:click="addWorkout">Add</button>
+    </div>
+
+    <div id="workouts">
+        <p>Workouts</p>
+
+        <ul id="workouts">
+            <li v-for="workout in workouts">
+                <p>{{ workout.date}}</p>
+                <p>{{ workout.title  }}</p>
+                <p>{{ workout.comments}}</p>
+                <button v-on:click="removeWorkout(workout.ID)">X</button>
+            </li>
+        </ul>
+    </div>
 </div>
 
 <script>
@@ -12,29 +35,56 @@
 new Vue({
     el: '#my_view',
     data: {
-        someData: 'init'
+        dateDay: 2,
+        dateMonth: 4,
+        dateYear: 1999,
+        name: '',
+        comments: '',
+        workouts: ''
+    },
+    methods: {
+        removeWorkout: function(workoutID) {
+            this.$http.post('http://localhost:3000/workouts/remove', {
+                ID: workoutID}).then(response => {
+                    this.workouts = response.body;
+                    console.log('sucess');
+                    // success callback
+                }, response => {
+                    console.log('error');
+                    // error callback
+                });
+        },
+        addWorkout: function(event) {
+            this.$http.post('http://localhost:3000/workouts/add', {
+                dateYear:this.dateYear,
+                dateMonth:this.dateMonth, 
+                dateDay:this.dateDay, 
+                title:this.name, 
+                comments: this.comments}).then(response => {
+                    this.workouts = response.body;
+                    console.log('sucess');
+                    // success callback
+                }, response => {
+                    console.log('error');
+                    // error callback
+                });
+        }
     },
     mounted: function() {
-        {
-            this.$http.get('http://localhost:3000/vuetest').then(response => {
-                this.someData = response.body;
+            var now = new Date();
+            this.dateDay =  now.getDate();
+            this.dateMonth =  now.getMonth() + 1;
+            this.dateYear =  now.getFullYear();
+
+            this.$http.get('http://localhost:3000/workouts').then(response => {
+                this.workouts = response.body;
                 console.log('sucess');
                 // success callback
             }, response => {
                 console.log('error');
                 // error callback
             });
-
-            // // GET /someUrl
-            // this.$http.get('http://httpbin.org/get').then(response => {
-            //     this.someData = response;
-            //     console.log('sucess');
-            //     // success callback
-            // }, response => {
-            //     console.log('error');
-            //     // error callback
-            // });
-        }
     }
+
 })
 </script>
