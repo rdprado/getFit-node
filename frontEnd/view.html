@@ -15,8 +15,12 @@
         <br>
         <button v-on:click="addWorkout">Add</button>
     </div>
-
+	<br>
     <div id="workouts">
+	<button v-on:click="previousWeek"> < </button>
+	<span>{{ currentWeek }} <span>
+	<button v-on:click="nextWeek"> > </button>
+	
         <p>Workouts</p>
 
         <ul id="workouts">
@@ -40,7 +44,20 @@ new Vue({
         dateYear: 1999,
         name: '',
         comments: '',
-        workouts: ''
+        workouts: '',
+		currentWeek: '',
+		pvt: {
+			currentWeekStart: "",
+			currentWeekEnd: "",
+			formatWeekDate: function(date) {
+				var d = prevWeekFinalDate
+				var curr_date = d.getDate();
+				var curr_month = d.getMonth() + 1; //Months are zero based
+				var curr_year = d.getFullYear();
+				var sundayFormatted = curr_date + "/" + curr_month + "/" + curr_year;	
+				this.pvt.currentWeekEnd = new Date(d);
+			}
+		}
     },
     methods: {
         removeWorkout: function(workoutID) {
@@ -68,6 +85,59 @@ new Vue({
                     console.log('error');
                     // error callback
                 });
+        },
+		previousWeek: function() {
+		
+			var prevWeekFinalDay = this.pvt.currentWeekStart.getDate() - 1;
+			var currentWeekStartCpy = new Date(this.pvt.currentWeekStart);
+			var prevWeekFinalDate = new Date(currentWeekStartCpy.setDate(prevWeekFinalDay));
+			
+			var d = prevWeekFinalDate
+			var curr_date = d.getDate();
+			var curr_month = d.getMonth() + 1; //Months are zero based
+			var curr_year = d.getFullYear();
+			var sundayFormatted = curr_date + "/" + curr_month + "/" + curr_year;	
+			this.pvt.currentWeekEnd = new Date(d);
+			
+			
+			var prevWeekFirstDate = new Date(prevWeekFinalDate.setDate(prevWeekFinalDay - 6));
+									
+			d = prevWeekFirstDate;
+			curr_date = d.getDate();
+			curr_month = d.getMonth() + 1; //Months are zero based
+			curr_year = d.getFullYear();
+			
+			var mondayFormatted = curr_date + "/" + curr_month + "/" + curr_year;
+			this.pvt.currentWeekStart = new Date(d);
+			
+			
+			this.currentWeek = mondayFormatted + " - " + sundayFormatted;
+
+        },
+		nextWeek: function() {
+		
+			var nextWeekFirstDay = this.pvt.currentWeekEnd.getDate() + 1;
+			var currentWeekEndCpy = new Date(this.pvt.currentWeekEnd);		
+			var nextWeekFirstDate = new Date(currentWeekEndCpy.setDate(nextWeekFirstDay));
+									
+			var d = nextWeekFirstDate;
+			var curr_date = d.getDate();
+			var curr_month = d.getMonth() + 1; //Months are zero based
+			var curr_year = d.getFullYear();
+			
+			var mondayFormatted = curr_date + "/" + curr_month + "/" + curr_year;
+			this.pvt.currentWeekStart = new Date(d);
+			
+			var nextWeekFinalDay = new Date(nextWeekFirstDate.setDate(nextWeekFirstDay + 6));
+			d = nextWeekFinalDay
+			curr_date = d.getDate();
+			curr_month = d.getMonth() + 1; //Months are zero based
+			curr_year = d.getFullYear();
+						
+			var sundayFormatted = curr_date + "/" + curr_month + "/" + curr_year;
+			this.pvt.currentWeekEnd = new Date(d);
+			
+			this.currentWeek = mondayFormatted + " - " + sundayFormatted;
         }
     },
     mounted: function() {
@@ -75,6 +145,30 @@ new Vue({
             this.dateDay =  now.getDate();
             this.dateMonth =  now.getMonth() + 1;
             this.dateYear =  now.getFullYear();
+			
+			var day = now.getDay();
+			var diff = now.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
+			var monday = new Date(now.setDate(diff));
+			var sunday = new Date(now.setDate(diff + 6));
+			
+			var d = monday;
+			var curr_date = d.getDate();
+			var curr_month = d.getMonth() + 1; //Months are zero based
+			var curr_year = d.getFullYear();
+			
+			this.pvt.currentWeekStart = d;
+			
+			var mondayFormatted = curr_date + "/" + curr_month + "/" + curr_year;
+			
+			d = sunday
+			curr_date = d.getDate();
+			curr_month = d.getMonth() + 1; //Months are zero based
+			curr_year = d.getFullYear();
+			var sundayFormatted = curr_date + "/" + curr_month + "/" + curr_year;
+			
+			this.pvt.currentWeekEnd = d;
+						
+			this.currentWeek = mondayFormatted + " - " + sundayFormatted;
 
             this.$http.get('http://localhost:3000/workouts').then(response => {
                 this.workouts = response.body;
