@@ -25,72 +25,30 @@
 		</div>
 		<!-- TODO: https://softwareengineering.stackexchange.com/questions/277778/why-are-people-making-tables-with-divs -->
 		<div id="">
+		
 			<table>
 				<tr>
 					<th>Day</th>
 					<th>Workouts</th>
 					<th>Duration</th>
 				</tr>
-				<!--<tr v-for="dayData in daysData">
-					<td>dayData.weekDayName</td>
-					<td>dayData.Activity</td>
-					<td>dayData.Duration</td>
-				</tr>-->
-			</table>
-			<table>
-				<tr>
-					<th>Day</th>
-					<th>Workouts</th>
-					<th>Duration</th>
-				</tr>
-				<tr>
-					<td>Monday</td>
-					<td>Running</td>
-					<td>1 hour</td>
-				</tr>
-				<tr>
-					<td>Tuesday</td>
-					<td>Running</td>
-					<td>1 hour</td>
-				</tr>
-				<tr>
-					<td>Wednesday</td>
-					<td>Running</td>
-					<td>1 hour</td>
-				</tr>
-				<tr>
-					<td>Thursday</td>
-					<td>Running</td>
-					<td>1 hour</td>
-				</tr>
-				<tr>
-					<td>Friday</td>
-					<td>Running</td>
-					<td>1 hour</td>
-				</tr>
-				<tr>
-					<td>Saturday</td>
-					<td>Running</td>
-					<td>1 hour</td>
-				</tr>
-				<tr>
-					<td>Sunday</td>
-					<td>Running</td>
-					<td>15 min</td>
+				<tr v-for="dayData in daysData">
+					<td>{{ dayData.weekDayName }}</td>
+					<td>{{ dayData.Activity }}</td>
+					<td>{{ dayData.Duration }}</td>
 				</tr>
 			</table>
+			
 		</div>
 		
 	</div>
 	
-    <div id="workouts">
-        <p>Workouts</p>
+    <div id="allWorkouts">
+        <p> All Workouts</p>
 
         <ul id="workouts">
             <li v-for="workout in workouts">
-                <p>{{ workout.date}}</p>
-                <p>{{ workout.title  }}</p>
-                <p>{{ workout.comments}}</p>
+                <p>Date: {{ workout.date}} | Name: {{ workout.title  }} | Comments: {{ workout.comments}}</p>
                 <button v-on:click="removeWorkout(workout.ID)">X</button>
             </li>
         </ul>
@@ -99,6 +57,10 @@
 
 <script>
 
+var workouts = [];
+
+var currentWeekStart = "";
+var currentWeekEnd = "";
 
 var formatWeekInterval = function(beginDate, endDate) {
 	return formatWeekDate(beginDate) + " - " + formatWeekDate(endDate);
@@ -112,8 +74,27 @@ var formatWeekDate = function(date) {
 	return curr_date + "/" + curr_month + "/" + curr_year;	
 }
 
-var currentWeekStart = "";
-var currentWeekEnd = "";
+var formatDaysDataForCurrentWeek = function(workouts){
+	var example = [
+	{
+		weekDayName: "Monday",
+		Activity: "Running",
+		Duration: "1 h"
+	},
+	{
+		weekDayName: "Tuesday",
+		Activity: "Running",
+		Duration: "1 h"
+	}, 
+	{
+		weekDayName: "Wednesday",
+		Activity: "Cycling",
+		Duration: "30 m"
+	}];
+	
+	return example;
+}
+
 
 new Vue({
     el: '#my_view',
@@ -124,7 +105,8 @@ new Vue({
         name: '',
         comments: '',
         workouts: '',
-		currentWeek: ''
+		currentWeek: '',
+		daysData: ''
     },
     methods: {
         removeWorkout: function(workoutID) {
@@ -167,6 +149,7 @@ new Vue({
 			
 			// PRESENT TODO same as below
 			this.currentWeek = formatWeekInterval(currentWeekStart, currentWeekEnd);
+			this.daysData = formatDaysDataForCurrentWeek(workouts);
         },
 		nextWeek: function() {
 		
@@ -181,6 +164,7 @@ new Vue({
 			
 			// PRESENT
 			this.currentWeek = formatWeekInterval(currentWeekStart, currentWeekEnd);
+			this.daysData = formatDaysDataForCurrentWeek(workouts);
         },
     },
     mounted: function() {
@@ -202,6 +186,8 @@ new Vue({
 			currentWeekEnd = new Date(currentWeekStartCpy.setDate(currentWeekStartDayInMonth + 6));
 			
 			this.currentWeek = formatWeekInterval(currentWeekStart, currentWeekEnd);
+			
+			this.daysData = formatDaysDataForCurrentWeek(workouts);
 
 
             this.$http.get('http://localhost:3000/workouts').then(response => {
