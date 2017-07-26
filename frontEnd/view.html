@@ -16,11 +16,74 @@
         <button v-on:click="addWorkout">Add</button>
     </div>
 	<br>
-    <div id="workouts">
-	<button v-on:click="previousWeek"> < </button>
-	<span>{{ currentWeek }} <span>
-	<button v-on:click="nextWeek"> > </button>
 	
+	<div id="weeklyWorkouts">
+		<div id="weekControls">
+			<button v-on:click="previousWeek"> < </button>
+			<span>{{ currentWeek }} <span>
+			<button v-on:click="nextWeek"> > </button>
+		</div>
+		<!-- TODO: https://softwareengineering.stackexchange.com/questions/277778/why-are-people-making-tables-with-divs -->
+		<div id="">
+			<table>
+				<tr>
+					<th>Day</th>
+					<th>Workouts</th>
+					<th>Duration</th>
+				</tr>
+				<!--<tr v-for="dayData in daysData">
+					<td>dayData.weekDayName</td>
+					<td>dayData.Activity</td>
+					<td>dayData.Duration</td>
+				</tr>-->
+			</table>
+			<table>
+				<tr>
+					<th>Day</th>
+					<th>Workouts</th>
+					<th>Duration</th>
+				</tr>
+				<tr>
+					<td>Monday</td>
+					<td>Running</td>
+					<td>1 hour</td>
+				</tr>
+				<tr>
+					<td>Tuesday</td>
+					<td>Running</td>
+					<td>1 hour</td>
+				</tr>
+				<tr>
+					<td>Wednesday</td>
+					<td>Running</td>
+					<td>1 hour</td>
+				</tr>
+				<tr>
+					<td>Thursday</td>
+					<td>Running</td>
+					<td>1 hour</td>
+				</tr>
+				<tr>
+					<td>Friday</td>
+					<td>Running</td>
+					<td>1 hour</td>
+				</tr>
+				<tr>
+					<td>Saturday</td>
+					<td>Running</td>
+					<td>1 hour</td>
+				</tr>
+				<tr>
+					<td>Sunday</td>
+					<td>Running</td>
+					<td>15 min</td>
+				</tr>
+			</table>
+		</div>
+		
+	</div>
+	
+    <div id="workouts">
         <p>Workouts</p>
 
         <ul id="workouts">
@@ -36,6 +99,22 @@
 
 <script>
 
+
+var formatWeekInterval = function(beginDate, endDate) {
+	return formatWeekDate(beginDate) + " - " + formatWeekDate(endDate);
+}
+
+var formatWeekDate = function(date) {
+	var d = date;
+	var curr_date = d.getDate();
+	var curr_month = d.getMonth() + 1; //Months are zero based
+	var curr_year = d.getFullYear();
+	return curr_date + "/" + curr_month + "/" + curr_year;	
+}
+
+var currentWeekStart = "";
+var currentWeekEnd = "";
+
 new Vue({
     el: '#my_view',
     data: {
@@ -45,19 +124,7 @@ new Vue({
         name: '',
         comments: '',
         workouts: '',
-		currentWeek: '',
-		pvt: {
-			currentWeekStart: "",
-			currentWeekEnd: "",
-			formatWeekDate: function(date) {
-				var d = prevWeekFinalDate
-				var curr_date = d.getDate();
-				var curr_month = d.getMonth() + 1; //Months are zero based
-				var curr_year = d.getFullYear();
-				var sundayFormatted = curr_date + "/" + curr_month + "/" + curr_year;	
-				this.pvt.currentWeekEnd = new Date(d);
-			}
-		}
+		currentWeek: ''
     },
     methods: {
         removeWorkout: function(workoutID) {
@@ -88,57 +155,33 @@ new Vue({
         },
 		previousWeek: function() {
 		
-			var prevWeekFinalDay = this.pvt.currentWeekStart.getDate() - 1;
-			var currentWeekStartCpy = new Date(this.pvt.currentWeekStart);
-			var prevWeekFinalDate = new Date(currentWeekStartCpy.setDate(prevWeekFinalDay));
+			var prevWeekFinalDay = currentWeekStart.getDate() - 1;
 			
-			var d = prevWeekFinalDate
-			var curr_date = d.getDate();
-			var curr_month = d.getMonth() + 1; //Months are zero based
-			var curr_year = d.getFullYear();
-			var sundayFormatted = curr_date + "/" + curr_month + "/" + curr_year;	
-			this.pvt.currentWeekEnd = new Date(d);
+			// SET CURRENT WEEK NEW END		
+			var currentWeekStartCpy = new Date(currentWeekStart);
+			currentWeekEnd = new Date(currentWeekStartCpy.setDate(prevWeekFinalDay));
 			
+			// SET CURRENT WEEK NEW START
+			var currentWeekEndCpy = new Date(currentWeekEnd);
+			currentWeekStart = new Date(currentWeekEndCpy.setDate(prevWeekFinalDay - 6));
 			
-			var prevWeekFirstDate = new Date(prevWeekFinalDate.setDate(prevWeekFinalDay - 6));
-									
-			d = prevWeekFirstDate;
-			curr_date = d.getDate();
-			curr_month = d.getMonth() + 1; //Months are zero based
-			curr_year = d.getFullYear();
-			
-			var mondayFormatted = curr_date + "/" + curr_month + "/" + curr_year;
-			this.pvt.currentWeekStart = new Date(d);
-			
-			
-			this.currentWeek = mondayFormatted + " - " + sundayFormatted;
-
+			// PRESENT TODO same as below
+			this.currentWeek = formatWeekInterval(currentWeekStart, currentWeekEnd);
         },
 		nextWeek: function() {
 		
-			var nextWeekFirstDay = this.pvt.currentWeekEnd.getDate() + 1;
-			var currentWeekEndCpy = new Date(this.pvt.currentWeekEnd);		
-			var nextWeekFirstDate = new Date(currentWeekEndCpy.setDate(nextWeekFirstDay));
-									
-			var d = nextWeekFirstDate;
-			var curr_date = d.getDate();
-			var curr_month = d.getMonth() + 1; //Months are zero based
-			var curr_year = d.getFullYear();
+			var nextWeekFirstDay = currentWeekEnd.getDate() + 1;
+			// SET CURRENT WEEK NEW START
+				var currentWeekEndCpy = new Date(currentWeekEnd);				
+				currentWeekStart = new Date(currentWeekEndCpy.setDate(nextWeekFirstDay));
 			
-			var mondayFormatted = curr_date + "/" + curr_month + "/" + curr_year;
-			this.pvt.currentWeekStart = new Date(d);
+			// SET CURRENT WEEK NEW END
+				var currentWeekStartCpy = new Date(currentWeekStart);
+				currentWeekEnd = new Date(currentWeekStartCpy.setDate(nextWeekFirstDay + 6));
 			
-			var nextWeekFinalDay = new Date(nextWeekFirstDate.setDate(nextWeekFirstDay + 6));
-			d = nextWeekFinalDay
-			curr_date = d.getDate();
-			curr_month = d.getMonth() + 1; //Months are zero based
-			curr_year = d.getFullYear();
-						
-			var sundayFormatted = curr_date + "/" + curr_month + "/" + curr_year;
-			this.pvt.currentWeekEnd = new Date(d);
-			
-			this.currentWeek = mondayFormatted + " - " + sundayFormatted;
-        }
+			// PRESENT
+			this.currentWeek = formatWeekInterval(currentWeekStart, currentWeekEnd);
+        },
     },
     mounted: function() {
             var now = new Date();
@@ -146,29 +189,20 @@ new Vue({
             this.dateMonth =  now.getMonth() + 1;
             this.dateYear =  now.getFullYear();
 			
+			// SET WEEK START BASED ON NOW
+			
 			var day = now.getDay();
 			var diff = now.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
-			var monday = new Date(now.setDate(diff));
-			var sunday = new Date(now.setDate(diff + 6));
+			currentWeekStart = new Date(now.setDate(diff));
 			
-			var d = monday;
-			var curr_date = d.getDate();
-			var curr_month = d.getMonth() + 1; //Months are zero based
-			var curr_year = d.getFullYear();
+			// SET WEEK END
 			
-			this.pvt.currentWeekStart = d;
+			var currentWeekStartCpy = new Date(currentWeekStart);
+			var currentWeekStartDayInMonth = currentWeekStartCpy.getDate();
+			currentWeekEnd = new Date(currentWeekStartCpy.setDate(currentWeekStartDayInMonth + 6));
 			
-			var mondayFormatted = curr_date + "/" + curr_month + "/" + curr_year;
-			
-			d = sunday
-			curr_date = d.getDate();
-			curr_month = d.getMonth() + 1; //Months are zero based
-			curr_year = d.getFullYear();
-			var sundayFormatted = curr_date + "/" + curr_month + "/" + curr_year;
-			
-			this.pvt.currentWeekEnd = d;
-						
-			this.currentWeek = mondayFormatted + " - " + sundayFormatted;
+			this.currentWeek = formatWeekInterval(currentWeekStart, currentWeekEnd);
+
 
             this.$http.get('http://localhost:3000/workouts').then(response => {
                 this.workouts = response.body;
