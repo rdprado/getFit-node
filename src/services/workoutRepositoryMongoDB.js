@@ -3,11 +3,11 @@ var WorkoutRepositoryMongoDB = function() {
     var database;
     const COLLECTION_NAME = 'workouts';
 
-    function doInit(db) {
+    function init(db) {
         database = db;
     };
 
-    function doAddWorkout(workout, done) {
+    function addWorkout(workout, done) {
 
         var doc = {ID:workout.getID(), date: workout.getDate(), title: workout.getTitle(), comments: workout.getComments()};
 
@@ -30,7 +30,7 @@ var WorkoutRepositoryMongoDB = function() {
         });
     }
 
-    function doFetchWorkouts(done) {
+    function fetchWorkouts(done) {
         database.collection(COLLECTION_NAME, {strict:true}, function(err, col) {
             if(!err){
                 col.find({}).toArray().then(function(docs){
@@ -42,7 +42,7 @@ var WorkoutRepositoryMongoDB = function() {
         });
     }
 
-    function doRemoveWorkout(id, done) {
+    function removeWorkout(id, done) {
         database.collection(COLLECTION_NAME, {strict:true}, function(err, col) {
             if(!err){
                 col.deleteOne({ID: id}).then(function(result){
@@ -55,14 +55,12 @@ var WorkoutRepositoryMongoDB = function() {
         });
     }
 
-    var publicAPI = {
-        init: doInit,
-        addWorkout: doAddWorkout,
-        fetchWorkouts: doFetchWorkouts,
-        removeWorkout: doRemoveWorkout
+    return {
+        init: init,
+        addWorkout: addWorkout,
+        fetchWorkouts: fetchWorkouts,
+        removeWorkout: removeWorkout
     };
-
-    return publicAPI;
 }
 
 module.exports = WorkoutRepositoryMongoDB;

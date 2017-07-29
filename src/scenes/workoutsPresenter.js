@@ -1,10 +1,10 @@
 var WorkoutsPresenter = function WorkoutPresenter() {
 
-    function doInit() {
+    function init() {
 
     }
 
-    function doPresentGetWorkouts(getWorkoutsResponse) {
+    function presentGetWorkouts(getWorkoutsResponse) {
         var viewModel = {
             workouts: []
         }
@@ -20,11 +20,9 @@ var WorkoutsPresenter = function WorkoutPresenter() {
         return viewModel;
     }
 
-    var publicAPI = {
-        presentGetWorkouts: doPresentGetWorkouts
+    return {
+        presentGetWorkouts: presentGetWorkouts
     }
-
-    return publicAPI;
 }
 
 module.exports = WorkoutsPresenter;

@@ -2,7 +2,7 @@ var WorkoutsController = function WorkoutsController(){
 
     var routeMaker, workoutsuseCaseInteractor;
 
-    function doInit(router, useCaseInteractor) {
+    function init(router, useCaseInteractor) {
         routeMaker = router;
         workoutsUseCaseInteractor = useCaseInteractor;
 
@@ -51,11 +51,9 @@ var WorkoutsController = function WorkoutsController(){
         });
     }
 
-    var publicAPI = {
-        init: doInit
-    }
-
-    return publicAPI;
+    return {
+        init: init
+    };
 }
 
 module.exports = WorkoutsController;

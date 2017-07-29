@@ -2,38 +2,36 @@ var Workout = function (ID, date, title, comments) {
 
     var ID, datePerformed, workoutTitle, workoutComments;
 
-    function doInit(id, date, title, comments) {
+    function init(id, date, title, comments) {
         ID = id;
         datePerformed = date;
         workoutTitle = title;
         workoutComments = comments;
     };
 
-    function doGetID() {
+    function getID() {
         return ID;
     }
 
-    function doGetDate() {
+    function getDate() {
         return datePerformed;
     };
 
-    function doGetTitle() {
+    function getTitle() {
         return workoutTitle;
     };
 
-    function doGetComments() {
+    function getComments() {
         return workoutComments;
     };
 
-    var publicAPI = {
-        init: doInit,
-        getID: doGetID,
-        getDate: doGetDate,
-        getTitle: doGetTitle,
-        getComments: doGetComments
+    return {
+        init: init,
+        getID: getID,
+        getDate: getDate,
+        getTitle: getTitle,
+        getComments: getComments
     }
-
-    return publicAPI;
 }
 
 module.exports = Workout;

@@ -5,17 +5,17 @@ var WorkoutsUseCaseInteractor = function() {
     var workoutRepository;
     var workoutsUseCaseInteractorOutput;
 
-    function doInit(workoutsRepository, useCaseInteractorOutput){
+    function init(workoutsRepository, useCaseInteractorOutput){
         workoutRepository = workoutsRepository;
         workoutsUseCaseInteractorOutput = useCaseInteractorOutput;
     };
 
-    function doAddWorkout(requestModel, done){
+    function addWorkout(requestModel, done){
         var workout = buildWorkoutFromRequest(requestModel);
         workoutRepository.addWorkout(workout, done);
     };
 
-    function doGetWorkouts(done){
+    function getWorkouts(done){
         var cb = function(workouts) {
             var responseModel = {
                 workouts: workouts
@@ -27,7 +27,7 @@ var WorkoutsUseCaseInteractor = function() {
         workoutRepository.fetchWorkouts(cb);
     };
 
-    function doRemoveWorkout(requestModel, done){
+    function removeWorkout(requestModel, done){
         workoutRepository.removeWorkout(requestModel.ID, done)
     }
 
@@ -37,14 +37,12 @@ var WorkoutsUseCaseInteractor = function() {
         return workout;
     };
 
-    var publicAPI = {
-        init: doInit,
-        addWorkout: doAddWorkout,
-        getWorkouts: doGetWorkouts,
-        removeWorkout: doRemoveWorkout
+    return {
+        init: init,
+        addWorkout: addWorkout,
+        getWorkouts: getWorkouts,
+        removeWorkout: removeWorkout
     };
-
-    return publicAPI;
 };
 
 module.exports = WorkoutsUseCaseInteractor;
