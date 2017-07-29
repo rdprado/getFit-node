@@ -1,7 +1,5 @@
 var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
+var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var mongo = require('mongodb');
@@ -11,12 +9,7 @@ var assert = require('assert');
 var app = express();
 var router = express.Router();
 
-//app.set('views', path.join(__dirname, 'views'));
-// app.set('view engine', 'jade');
-
-// uncomment after placing your favicon in /public
-//app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
-app.use(logger('dev'));
+app.use(morgan('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -24,7 +17,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Connection URL
 var url = 'mongodb://localhost:27017/mydb';
-// Use connect method to connect to the server
 MongoClient.connect(url, function(err, database) {
   assert.equal(null, err);
 
@@ -47,7 +39,7 @@ function start(db) {
     var injector = require('./injector')
     injector.inject(router, db);
 
-    app.use('/', router);
+    app.use(router);
 
     // catch 404 and forward to error handler
     app.use(function(req, res, next) {
@@ -67,6 +59,5 @@ function start(db) {
         res.render('error');
     });
 }
-// view engine setup
 
 module.exports = app;

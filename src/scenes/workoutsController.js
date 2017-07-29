@@ -29,7 +29,8 @@ var WorkoutsController = function WorkoutsController(){
 
         router.post('/workouts/add', function(req, res, next) {
 
-            var date = new Date(Date.UTC(req.body.dateYear, req.body.dateMonth, req.body.dateDay));
+            // TODO save in utc, convert local to utc
+            var date = new Date(Date.UTC(req.body.dateYear, req.body.dateMonth - 1, req.body.dateDay));
 
             var requestModel = {
                 date: date,

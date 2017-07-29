@@ -1,5 +1,6 @@
 <script src="./node_modules/vue/dist/vue.js"></script>
 <script src="./node_modules/vue-resource/dist/vue-resource.js"></script>
+<script src="./node_modules/lodash/lodash.js"></script>
 
 <div id="my_view">
 
@@ -15,34 +16,46 @@
         <br>
         <button v-on:click="addWorkout">Add</button>
     </div>
-	<br>
-	
-	<div id="weeklyWorkouts">
-		<div id="weekControls">
-			<button v-on:click="previousWeek"> < </button>
-			<span>{{ currentWeek }} <span>
-			<button v-on:click="nextWeek"> > </button>
-		</div>
-		<!-- TODO: https://softwareengineering.stackexchange.com/questions/277778/why-are-people-making-tables-with-divs -->
-		<div id="">
-		
-			<table>
-				<tr>
-					<th>Day</th>
-					<th>Workouts</th>
-					<th>Duration</th>
-				</tr>
-				<tr v-for="dayData in daysData">
-					<td>{{ dayData.weekDayName }}</td>
-					<td>{{ dayData.Activity }}</td>
-					<td>{{ dayData.Duration }}</td>
-				</tr>
-			</table>
-			
-		</div>
-		
-	</div>
-	
+    <br>
+
+    <div id="weeklyWorkouts">
+        <div id="weekControls">
+            <button v-on:click="previousWeek"> < </button>
+            <span>{{ currentWeek }} </span>
+            <button v-on:click="nextWeek"> > </button>
+        </div>
+        <!-- TODO: https://softwareengineering.stackexchange.com/questions/277778/why-are-people-making-tables-with-divs -->
+        <div id="">
+
+            <table id="daysData">
+                <tr>
+                    <th>Day</th>
+                    <th>Workouts</th>
+                    <th>Duration</th>
+                </tr>
+                <tr v-for="dayData in daysData">
+                    <td>{{ dayData.weekDayName }}</td>
+                    <td>
+                        <ul>
+                            <li v-for="activity in dayData.activities">
+                                {{ activity.title }}
+                            </li>
+                        </ul>
+                    </td>
+                    <td>
+                        <ul>
+                            <li v-for="activity in dayData.activities">
+                                {{ activity.duration }}
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </table>
+
+        </div>
+
+    </div>
+
     <div id="allWorkouts">
         <p> All Workouts</p>
 
@@ -59,40 +72,51 @@
 
 var workouts = [];
 
-var currentWeekStart = "";
-var currentWeekEnd = "";
+var weekStart = "";
+var weekEnd = "";
 
 var formatWeekInterval = function(beginDate, endDate) {
-	return formatWeekDate(beginDate) + " - " + formatWeekDate(endDate);
+    return formatWeekDate(beginDate) + " - " + formatWeekDate(endDate);
 }
 
 var formatWeekDate = function(date) {
-	var d = date;
-	var curr_date = d.getDate();
-	var curr_month = d.getMonth() + 1; //Months are zero based
-	var curr_year = d.getFullYear();
-	return curr_date + "/" + curr_month + "/" + curr_year;	
+    var d = date;
+    var curr_date = d.getDate();
+    var curr_month = d.getMonth() + 1; //Months are zero based
+    var curr_year = d.getFullYear();
+    return curr_date + "/" + curr_month + "/" + curr_year;	
 }
 
-var formatDaysDataForCurrentWeek = function(workouts){
-	var example = [
-	{
-		weekDayName: "Monday",
-		Activity: "Running",
-		Duration: "1 h"
-	},
-	{
-		weekDayName: "Tuesday",
-		Activity: "Running",
-		Duration: "1 h"
-	}, 
-	{
-		weekDayName: "Wednesday",
-		Activity: "Cycling",
-		Duration: "30 m"
-	}];
-	
-	return example;
+var formatWeekDateToModel = function(date) {
+    var d = date;
+    var curr_date = d.getDate();
+    var curr_month = d.getMonth() + 1; //Months are zero based
+    var curr_year = d.getFullYear();
+    return curr_month + "/" + curr_date + "/" + curr_year;	
+}
+
+var daysOfWeek  = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+var formatDaysDataForCurrentWeek = function(workoutsByDate){
+    var weekStartCpy = new Date(weekStart);
+
+    var daysDataViewModel = [];
+
+    for(i = 0; i < daysOfWeek.length; i++) {
+        daysDataViewModel[i] = {weekDayName: daysOfWeek[i], activities: []};
+
+        var currDate = new Date(weekStartCpy.setDate(weekStart.getDate() + i));
+        var currDateFormatted = formatWeekDateToModel(currDate);
+
+        var workouts = workoutsByDate[currDateFormatted];
+        if(workouts) {
+            for(wkt in workouts) {
+                daysDataViewModel[i].activities.push({title: workouts[wkt].title, duration:'1 hour'});
+            }
+        }
+    }
+
+    return daysDataViewModel;
 }
 
 
@@ -105,14 +129,19 @@ new Vue({
         name: '',
         comments: '',
         workouts: '',
-		currentWeek: '',
-		daysData: ''
+        currentWeek: '',
+        daysData: ''
     },
     methods: {
+        updateUI: function() {
+            this.workouts = workouts;
+            var wksByDate = _.groupBy(workouts, 'date');
+            this.daysData = formatDaysDataForCurrentWeek(wksByDate);
+        },
         removeWorkout: function(workoutID) {
-            this.$http.post('http://localhost:3000/workouts/remove', {
-                ID: workoutID}).then(response => {
-                    this.workouts = response.body;
+            this.$http.post('http://localhost:3000/workouts/remove', {ID: workoutID}).then(response => {
+                    workouts = response.body;
+                    this.updateUI();
                     console.log('sucess');
                     // success callback
                 }, response => {
@@ -127,7 +156,8 @@ new Vue({
                 dateDay:this.dateDay, 
                 title:this.name, 
                 comments: this.comments}).then(response => {
-                    this.workouts = response.body;
+                    workouts = response.body;
+                    this.updateUI();
                     console.log('sucess');
                     // success callback
                 }, response => {
@@ -135,69 +165,73 @@ new Vue({
                     // error callback
                 });
         },
-		previousWeek: function() {
-		
-			var prevWeekFinalDay = currentWeekStart.getDate() - 1;
-			
-			// SET CURRENT WEEK NEW END		
-			var currentWeekStartCpy = new Date(currentWeekStart);
-			currentWeekEnd = new Date(currentWeekStartCpy.setDate(prevWeekFinalDay));
-			
-			// SET CURRENT WEEK NEW START
-			var currentWeekEndCpy = new Date(currentWeekEnd);
-			currentWeekStart = new Date(currentWeekEndCpy.setDate(prevWeekFinalDay - 6));
-			
-			// PRESENT TODO same as below
-			this.currentWeek = formatWeekInterval(currentWeekStart, currentWeekEnd);
-			this.daysData = formatDaysDataForCurrentWeek(workouts);
+        previousWeek: function() {
+
+            var prevWeekFinalDay = weekStart.getDate() - 1;
+
+            // SET CURRENT WEEK NEW END		
+            var weekStartCpy = new Date(weekStart);
+            weekEnd = new Date(weekStartCpy.setDate(prevWeekFinalDay));
+
+            // SET CURRENT WEEK NEW START
+            var weekEndCpy = new Date(weekEnd);
+            weekStart = new Date(weekEndCpy.setDate(prevWeekFinalDay - 6));
+
+            // PRESENT TODO same as below
+            this.currentWeek = formatWeekInterval(weekStart, weekEnd);
+
+            this.updateUI();
         },
-		nextWeek: function() {
-		
-			var nextWeekFirstDay = currentWeekEnd.getDate() + 1;
-			// SET CURRENT WEEK NEW START
-				var currentWeekEndCpy = new Date(currentWeekEnd);				
-				currentWeekStart = new Date(currentWeekEndCpy.setDate(nextWeekFirstDay));
-			
-			// SET CURRENT WEEK NEW END
-				var currentWeekStartCpy = new Date(currentWeekStart);
-				currentWeekEnd = new Date(currentWeekStartCpy.setDate(nextWeekFirstDay + 6));
-			
-			// PRESENT
-			this.currentWeek = formatWeekInterval(currentWeekStart, currentWeekEnd);
-			this.daysData = formatDaysDataForCurrentWeek(workouts);
+        nextWeek: function() {
+
+            var nextWeekFirstDay = weekEnd.getDate() + 1;
+            // SET CURRENT WEEK NEW START
+            var weekEndCpy = new Date(weekEnd);				
+            weekStart = new Date(weekEndCpy.setDate(nextWeekFirstDay));
+
+            // SET CURRENT WEEK NEW END
+            var weekStartCpy = new Date(weekStart);
+            weekEnd = new Date(weekStartCpy.setDate(nextWeekFirstDay + 6));
+
+            // PRESENT
+            this.currentWeek = formatWeekInterval(weekStart, weekEnd);
+
+            this.updateUI();
         },
     },
     mounted: function() {
-            var now = new Date();
-            this.dateDay =  now.getDate();
-            this.dateMonth =  now.getMonth() + 1;
-            this.dateYear =  now.getFullYear();
-			
-			// SET WEEK START BASED ON NOW
-			
-			var day = now.getDay();
-			var diff = now.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
-			currentWeekStart = new Date(now.setDate(diff));
-			
-			// SET WEEK END
-			
-			var currentWeekStartCpy = new Date(currentWeekStart);
-			var currentWeekStartDayInMonth = currentWeekStartCpy.getDate();
-			currentWeekEnd = new Date(currentWeekStartCpy.setDate(currentWeekStartDayInMonth + 6));
-			
-			this.currentWeek = formatWeekInterval(currentWeekStart, currentWeekEnd);
-			
-			this.daysData = formatDaysDataForCurrentWeek(workouts);
+        var now = new Date();
+        this.dateDay =  now.getDate();
+        this.dateMonth =  now.getMonth() + 1;
+        this.dateYear =  now.getFullYear();
+
+        // SET WEEK START BASED ON NOW
+
+        var day = now.getDay();
+        var diff = now.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
+        weekStart = new Date(now.setDate(diff));
+
+        // SET WEEK END
+
+        var weekStartCpy = new Date(weekStart);
+        var weekStartDayInMonth = weekStartCpy.getDate();
+        weekEnd = new Date(weekStartCpy.setDate(weekStartDayInMonth + 6));
+
+        this.currentWeek = formatWeekInterval(weekStart, weekEnd);
 
 
-            this.$http.get('http://localhost:3000/workouts').then(response => {
-                this.workouts = response.body;
-                console.log('sucess');
-                // success callback
-            }, response => {
-                console.log('error');
-                // error callback
-            });
+
+        this.$http.get('http://localhost:3000/workouts').then(response => {
+            workouts = response.body;
+
+            this.updateUI();
+
+            console.log('sucess');
+            // success callback
+        }, response => {
+            console.log('error');
+            // error callback
+        });
     }
 
 })
