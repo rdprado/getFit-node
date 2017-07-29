@@ -10,9 +10,9 @@ var WorkoutsUseCaseInteractor = function() {
         workoutsUseCaseInteractorOutput = useCaseInteractorOutput;
     };
 
-    function doAddWorkout(requestModel){
+    function doAddWorkout(requestModel, done){
         var workout = buildWorkoutFromRequest(requestModel);
-        workoutRepository.addWorkout(workout, ()=>{});
+        workoutRepository.addWorkout(workout, done);
     };
 
     function doGetWorkouts(done){
@@ -27,8 +27,8 @@ var WorkoutsUseCaseInteractor = function() {
         workoutRepository.fetchWorkouts(cb);
     };
 
-    function doRemoveWorkout(requestModel){
-        workoutRepository.removeWorkout(requestModel.ID, ()=>{})
+    function doRemoveWorkout(requestModel, done){
+        workoutRepository.removeWorkout(requestModel.ID, done)
     }
 
     function buildWorkoutFromRequest(requestModel){

@@ -29,27 +29,24 @@ var WorkoutsController = function WorkoutsController(){
 
         router.post('/workouts/add', function(req, res, next) {
 
-            // TODO save in utc, convert local to utc
-            var date = new Date(Date.UTC(req.body.dateYear, req.body.dateMonth - 1, req.body.dateDay));
-
             var requestModel = {
-                date: date,
+                date: new Date(req.body.date),
                 title: req.body.title,
                 comments: req.body.comments
             }
 
-            workoutsUseCaseInteractor.addWorkout(requestModel);
-
-            sendWorkouts(res);
+            workoutsUseCaseInteractor.addWorkout(requestModel, ()=>{
+                sendWorkouts(res);
+            });
         });
 
         router.post('/workouts/remove', function(req, res, next){
             var requestModel = {
                 ID: req.body.ID,
             }
-            workoutsUseCaseInteractor.removeWorkout(requestModel);
-
-            sendWorkouts(res);
+            workoutsUseCaseInteractor.removeWorkout(requestModel, ()=> {
+                sendWorkouts(res);
+            });
 
         });
     }
@@ -60,6 +57,5 @@ var WorkoutsController = function WorkoutsController(){
 
     return publicAPI;
 }
-
 
 module.exports = WorkoutsController;

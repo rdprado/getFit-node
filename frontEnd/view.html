@@ -1,6 +1,11 @@
 <script src="./node_modules/vue/dist/vue.js"></script>
-<script src="./node_modules/vue-resource/dist/vue-resource.js"></script>
+<script src="./node_modules/axios/dist/axios.js"></script>
 <script src="./node_modules/lodash/lodash.js"></script>
+
+<script src="./src/entities/workout.js"></script>
+<script src="./src/services/workoutRepositoryAxios.js"></script>
+<script src="./src/scenes/workoutsInteractor.js"></script>
+<script src="./src/scenes/workoutsPresenter.js"></script>
 
 <div id="my_view">
 
@@ -10,7 +15,7 @@
         <input v-model="dateDay" placeholder="Day">
         <input v-model="dateYear" placeholder="Year">
         <br>
-        <input v-model="name" placeholder="Name">
+        <input v-model="title" placeholder="Name">
         <br>
         <textarea v-model="comments" placeholder="Comments"></textarea>
         <br>
@@ -68,171 +73,4 @@
     </div>
 </div>
 
-<script>
-
-var workouts = [];
-
-var weekStart = "";
-var weekEnd = "";
-
-var formatWeekInterval = function(beginDate, endDate) {
-    return formatWeekDate(beginDate) + " - " + formatWeekDate(endDate);
-}
-
-var formatWeekDate = function(date) {
-    var d = date;
-    var curr_date = d.getDate();
-    var curr_month = d.getMonth() + 1; //Months are zero based
-    var curr_year = d.getFullYear();
-    return curr_date + "/" + curr_month + "/" + curr_year;	
-}
-
-var formatWeekDateToModel = function(date) {
-    var d = date;
-    var curr_date = d.getDate();
-    var curr_month = d.getMonth() + 1; //Months are zero based
-    var curr_year = d.getFullYear();
-    return curr_month + "/" + curr_date + "/" + curr_year;	
-}
-
-var daysOfWeek  = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-
-var formatDaysDataForCurrentWeek = function(workoutsByDate){
-    var weekStartCpy = new Date(weekStart);
-
-    var daysDataViewModel = [];
-
-    for(i = 0; i < daysOfWeek.length; i++) {
-        daysDataViewModel[i] = {weekDayName: daysOfWeek[i], activities: []};
-
-        var currDate = new Date(weekStartCpy.setDate(weekStart.getDate() + i));
-        var currDateFormatted = formatWeekDateToModel(currDate);
-
-        var workouts = workoutsByDate[currDateFormatted];
-        if(workouts) {
-            for(wkt in workouts) {
-                daysDataViewModel[i].activities.push({title: workouts[wkt].title, duration:'1 hour'});
-            }
-        }
-    }
-
-    return daysDataViewModel;
-}
-
-
-new Vue({
-    el: '#my_view',
-    data: {
-        dateDay: 2,
-        dateMonth: 4,
-        dateYear: 1999,
-        name: '',
-        comments: '',
-        workouts: '',
-        currentWeek: '',
-        daysData: ''
-    },
-    methods: {
-        updateUI: function() {
-            this.workouts = workouts;
-            var wksByDate = _.groupBy(workouts, 'date');
-            this.daysData = formatDaysDataForCurrentWeek(wksByDate);
-        },
-        removeWorkout: function(workoutID) {
-            this.$http.post('http://localhost:3000/workouts/remove', {ID: workoutID}).then(response => {
-                    workouts = response.body;
-                    this.updateUI();
-                    console.log('sucess');
-                    // success callback
-                }, response => {
-                    console.log('error');
-                    // error callback
-                });
-        },
-        addWorkout: function(event) {
-            this.$http.post('http://localhost:3000/workouts/add', {
-                dateYear:this.dateYear,
-                dateMonth:this.dateMonth, 
-                dateDay:this.dateDay, 
-                title:this.name, 
-                comments: this.comments}).then(response => {
-                    workouts = response.body;
-                    this.updateUI();
-                    console.log('sucess');
-                    // success callback
-                }, response => {
-                    console.log('error');
-                    // error callback
-                });
-        },
-        previousWeek: function() {
-
-            var prevWeekFinalDay = weekStart.getDate() - 1;
-
-            // SET CURRENT WEEK NEW END		
-            var weekStartCpy = new Date(weekStart);
-            weekEnd = new Date(weekStartCpy.setDate(prevWeekFinalDay));
-
-            // SET CURRENT WEEK NEW START
-            var weekEndCpy = new Date(weekEnd);
-            weekStart = new Date(weekEndCpy.setDate(prevWeekFinalDay - 6));
-
-            // PRESENT TODO same as below
-            this.currentWeek = formatWeekInterval(weekStart, weekEnd);
-
-            this.updateUI();
-        },
-        nextWeek: function() {
-
-            var nextWeekFirstDay = weekEnd.getDate() + 1;
-            // SET CURRENT WEEK NEW START
-            var weekEndCpy = new Date(weekEnd);				
-            weekStart = new Date(weekEndCpy.setDate(nextWeekFirstDay));
-
-            // SET CURRENT WEEK NEW END
-            var weekStartCpy = new Date(weekStart);
-            weekEnd = new Date(weekStartCpy.setDate(nextWeekFirstDay + 6));
-
-            // PRESENT
-            this.currentWeek = formatWeekInterval(weekStart, weekEnd);
-
-            this.updateUI();
-        },
-    },
-    mounted: function() {
-        var now = new Date();
-        this.dateDay =  now.getDate();
-        this.dateMonth =  now.getMonth() + 1;
-        this.dateYear =  now.getFullYear();
-
-        // SET WEEK START BASED ON NOW
-
-        var day = now.getDay();
-        var diff = now.getDate() - day + (day == 0 ? -6:1); // adjust when day is sunday
-        weekStart = new Date(now.setDate(diff));
-
-        // SET WEEK END
-
-        var weekStartCpy = new Date(weekStart);
-        var weekStartDayInMonth = weekStartCpy.getDate();
-        weekEnd = new Date(weekStartCpy.setDate(weekStartDayInMonth + 6));
-
-        this.currentWeek = formatWeekInterval(weekStart, weekEnd);
-
-
-
-        this.$http.get('http://localhost:3000/workouts').then(response => {
-            workouts = response.body;
-
-            this.updateUI();
-
-            console.log('sucess');
-            // success callback
-        }, response => {
-            console.log('error');
-            // error callback
-        });
-    }
-
-})
-</script>
+<script src="./src/scenes/workoutsViewController.js"></script>
