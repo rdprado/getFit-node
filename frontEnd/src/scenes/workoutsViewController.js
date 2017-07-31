@@ -1,6 +1,8 @@
 var weekStart = "";
 var weekEnd = "";
 
+var workoutsInteractor;
+
 var workoutsController = new Vue({
     el: '#my_view',
     data: {
@@ -30,11 +32,10 @@ var workoutsController = new Vue({
         },
 
         addWorkout: function() {
-            // TODO save in utc, convert local to utc
-            var date = new Date(this.dateYear, this.dateMonth - 1, this.dateDay).toUTCString();
-
             var requestModel = {
-                date: date,
+                dateYear: this.dateYear,
+				dateMonth: this.dateMonth,
+				dateDayInMonth: this.dateDay,
                 title: this.title,
                 comments: this.comments
             }
@@ -75,7 +76,7 @@ var workoutsController = new Vue({
         var workoutRepository = WorkoutRepositoryAxios();
         var workoutsPresenter = WorkoutsPresenter();
         workoutsPresenter.init(this);
-        var workoutsInteractor = WorkoutsInteractor();
+        workoutsInteractor = WorkoutsInteractor();
         workoutsInteractor.init(workoutRepository, workoutsPresenter);
 
         var now = new Date();

@@ -19,11 +19,13 @@ var url = 'mongodb://localhost:27017/mydb';
 MongoClient.connect(url, function(err, database) {
   assert.equal(null, err);
 
+  console.log("Starting db....");
   var db = database;
   start(db);
 });
 
 function start(db) {
+	
     /* GET home page. */
     router.get('/', function(req, res, next) {
         //res.render('index', { title: 'Express' });

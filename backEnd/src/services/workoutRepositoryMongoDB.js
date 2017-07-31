@@ -10,7 +10,7 @@ var WorkoutRepositoryMongoDB = function() {
     function addWorkout(workout, done) {
 
         var doc = {ID:workout.getID(), date: workout.getDate(), title: workout.getTitle(), comments: workout.getComments()};
-
+		
         database.collection(COLLECTION_NAME, {strict:true}, function(err, col) {
             if(!err){
                 col.insertOne(doc, function (err, result) {
@@ -35,6 +35,8 @@ var WorkoutRepositoryMongoDB = function() {
             if(!err){
                 col.find({}).toArray().then(function(docs){
                     done(docs);
+					console.log("fetch mongo: " + docs)
+					console.log("fetch mongo example: " + docs[0].date)
                 }).catch(function(err){
                     console.log(err);
                 });

@@ -33,7 +33,7 @@ var WorkoutsUseCaseInteractor = function() {
 
     function buildWorkoutFromRequest(requestModel){
         var workout = Workout();
-        workout.init(UUID(), requestModel.date, requestModel.title, requestModel.comments);
+        workout.init(UUID(), new Date(requestModel.ISOStringDate), requestModel.title, requestModel.comments);
         return workout;
     };
 

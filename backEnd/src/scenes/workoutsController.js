@@ -30,7 +30,7 @@ var WorkoutsController = function WorkoutsController(){
         router.post('/workouts/add', function(req, res, next) {
 
             var requestModel = {
-                date: new Date(req.body.date),
+                ISOStringDate: req.body.ISOStringDate,
                 title: req.body.title,
                 comments: req.body.comments
             }

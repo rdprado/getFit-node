@@ -4,7 +4,14 @@ var WorkoutRepositoryAxios = function() {
 
     function getWorkouts(done) {
         axios.get('http://localhost:3000/workouts').then(response => {
-            workouts = response.data;
+            workouts = [];
+			var workoutsResponse = response.data; 
+			for(wkt in workoutsResponse) {
+				var workout = Workout();
+				workout.init(new Date(workoutsResponse[wkt].ISOStringDate), workoutsResponse[wkt].title, workoutsResponse[wkt].comments);
+				workouts.push(workout);
+			}
+			
             done(workouts);
             console.log('sucess');
         }).catch(error => {
@@ -14,7 +21,7 @@ var WorkoutRepositoryAxios = function() {
 
     function addWorkout(workout, done) {
         axios.post('http://localhost:3000/workouts/add', {
-            date:workout.getDate(), 
+            ISOStringDate:workout.getDate().toISOString(), 
             title:workout.getTitle(), 
             comments: workout.getComments()}).then(response => {
                 workouts = response.data;
