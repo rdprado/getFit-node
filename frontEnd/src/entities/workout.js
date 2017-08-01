@@ -21,7 +21,7 @@ var Workout = function () {
     };
 
     function toObjLiteral() {
-        return {date: getDate(), title: getTitle(), comments: getComments()};
+        return {ISOStringDate: getDate().toISOString(), title: getTitle(), comments: getComments()};
     }
 
     return {

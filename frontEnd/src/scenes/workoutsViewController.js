@@ -23,9 +23,10 @@ var workoutsController = new Vue({
         updateWorkoutsUI: function(viewModel) {
             this.workouts = viewModel;
         },
-        removeWorkout: function() {
+        removeWorkout: function(date, title) {
             var requestModel = {
-                ID: "",
+                ISOStringDate: date,
+                title: title
             }
 
             workoutsInteractor.removeWorkout(requestModel);

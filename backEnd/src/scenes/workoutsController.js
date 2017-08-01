@@ -28,13 +28,13 @@ var WorkoutsController = function WorkoutsController(){
         });
 
         router.post('/workouts/add', function(req, res, next) {
-
+		
             var requestModel = {
                 ISOStringDate: req.body.ISOStringDate,
                 title: req.body.title,
                 comments: req.body.comments
             }
-
+			
             workoutsUseCaseInteractor.addWorkout(requestModel, ()=>{
                 sendWorkouts(res);
             });
@@ -42,8 +42,13 @@ var WorkoutsController = function WorkoutsController(){
 
         router.post('/workouts/remove', function(req, res, next){
             var requestModel = {
-                ID: req.body.ID,
+                ISOStringDate: req.body.ISOStringDate,
+				title: req.body.title
             }
+			
+					console.log("1.....=== : " + requestModel.ISOStringDate);
+		console.log("2.....=== : " + requestModel.title);
+			
             workoutsUseCaseInteractor.removeWorkout(requestModel, ()=> {
                 sendWorkouts(res);
             });

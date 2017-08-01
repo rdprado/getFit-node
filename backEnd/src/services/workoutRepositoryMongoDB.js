@@ -10,9 +10,8 @@ var WorkoutRepositoryMongoDB = function() {
     };
 
     function addWorkout(workout, done) {
-
-        var doc = {ID:workout.getID(), date: workout.getDate(), title: workout.getTitle(), comments: workout.getComments()};
-
+        var doc = {date: workout.getDate(), title: workout.getTitle(), comments: workout.getComments()};
+		
         database.collection(COLLECTION_NAME, {strict:true}, function(err, col) {
             if(!err){
                 col.insertOne(doc, function (err, result) {
@@ -36,7 +35,7 @@ var WorkoutRepositoryMongoDB = function() {
         database.collection(COLLECTION_NAME, {strict:true}, function(err, col) {
             if(!err){
                 col.find({}).toArray().then(function(docs){
-                    done(docs.map(toWorkout));
+                    done(docs.map(docToWorkout));
                 }).catch(function(err){
                     console.log(err);
                 });
@@ -44,16 +43,20 @@ var WorkoutRepositoryMongoDB = function() {
         });
     }
 
-    function toWorkout(mongoDoc){
+    function docToWorkout(mongoDoc){
         var wkt = Workout();
-        wkt.init("", mongoDoc.date, mongoDoc.title, mongoDoc.comments);
+        wkt.init(mongoDoc.date, mongoDoc.title, mongoDoc.comments);
         return wkt;
     }
 
-    function removeWorkout(id, done) {
+    function removeWorkout(date, title, done) {
+		
+		console.log("1=== : " + date);
+		console.log("2=== : " + title);
+		
         database.collection(COLLECTION_NAME, {strict:true}, function(err, col) {
             if(!err){
-                col.deleteOne({ID: id}).then(function(result){
+                col.deleteOne({date: date, title: title}).then(function(result){
                     done();
                     console.log('removed: ' + result.deletedCount);
                 }).catch(function(err){
@@ -62,7 +65,6 @@ var WorkoutRepositoryMongoDB = function() {
             } 
         });
     }
-
 
     return {
         init: init,

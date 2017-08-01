@@ -66,8 +66,8 @@
 
         <ul id="workouts">
             <li v-for="workout in workouts">
-                <p>Date: {{ workout.date}} | Name: {{ workout.title  }} | Comments: {{ workout.comments}}</p>
-                <button v-on:click="removeWorkout(workout.ID)">X</button>
+                <p>Date: {{ workout.ISOStringDate}} | Name: {{ workout.title  }} | Comments: {{ workout.comments}}</p>
+                <button v-on:click="removeWorkout(workout.ISOStringDate, workout.title)">X</button>
             </li>
         </ul>
     </div>

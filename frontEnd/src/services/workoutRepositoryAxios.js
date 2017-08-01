@@ -4,15 +4,8 @@ var WorkoutRepositoryAxios = function() {
 
     function getWorkouts(done) {
         axios.get('http://localhost:3000/workouts').then(response => {
-            workouts = [];
 			var workoutsResponse = response.data; 
-			for(wkt in workoutsResponse) {
-				var workout = Workout();
-				workout.init(new Date(workoutsResponse[wkt].ISOStringDate), workoutsResponse[wkt].title, workoutsResponse[wkt].comments);
-				workouts.push(workout);
-			}
-			
-            done(workouts);
+			done(workoutsResponse.map(jsonStringToWkt));
             console.log('sucess');
         }).catch(error => {
             console.log(error);
@@ -24,23 +17,29 @@ var WorkoutRepositoryAxios = function() {
             ISOStringDate:workout.getDate().toISOString(), 
             title:workout.getTitle(), 
             comments: workout.getComments()}).then(response => {
-                workouts = response.data;
-                done(workouts);
+                var workoutsResponse = response.data; 
+                done(workoutsResponse.map(jsonStringToWkt));
                 console.log('sucess');
             }).catch(error => {
                 console.log('error');
             });
     };
 
-    function removeWorkout(workoutId, done) {
-        axios.post('http://localhost:3000/workouts/remove', {ID: workoutID}).then(response => {
-            workouts = response.data;
-            done(workouts);
+    function removeWorkout(date, title, done) {
+        axios.post('http://localhost:3000/workouts/remove', {ISOStringDate: date.toISOString(), title}).then(response => {
+            var workoutsResponse = response.data; 
+            done(workoutsResponse.map(jsonStringToWkt));
             console.log('sucess');
         }).catch(error => {
             console.log(error);
         });
     };
+	
+	function jsonStringToWkt(jsObject){
+        var wkt = Workout();
+        wkt.init(new Date(jsObject.ISOStringDate), jsObject.title, jsObject.comments);
+        return wkt;
+    }
 
     return {
         getWorkouts: getWorkouts,

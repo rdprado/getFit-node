@@ -11,7 +11,7 @@ var WorkoutsPresenter = function() {
         var formattedWeek = formatWeekInterval(responseModel.weekBegin, responseModel.weekEnd);
 
         var wksWithSimplifiedDate = responseModel.workouts.map((wkt)=>{
-            return {date:dateToMMDDYYYY(wkt.date), title: wkt.title, comments: wkt.comments}
+            return {date:dateToMMDDYYYY(new Date(wkt.ISOStringDate)), title: wkt.title, comments: wkt.comments}
         });
 
         var wktsBySimplifiedDate = _.groupBy(wksWithSimplifiedDate, 'date');

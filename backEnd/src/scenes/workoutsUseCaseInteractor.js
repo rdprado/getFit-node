@@ -1,5 +1,4 @@
 var Workout = require('../entities/workout')
-var UUID = require('uuid/v1');
 
 var WorkoutsUseCaseInteractor = function() {
     var workoutRepository;
@@ -11,33 +10,39 @@ var WorkoutsUseCaseInteractor = function() {
     };
 
     function addWorkout(requestModel, done){
-        var workout = buildWorkoutFromRequest(requestModel);
-        workoutRepository.addWorkout(workout, done);
+        workoutRepository.addWorkout(reqToWkt(requestModel), done);
     };
-
+	
     function getWorkouts(done){
         var cb = function(workouts) {
 
-            var responseModel = {workouts: workouts.map(toResponseModel)}
+            var responseModel = {workouts: workouts.map(wktToRes)}
             done(workoutsUseCaseInteractorOutput.formatGetWorkouts(responseModel));
         };
 
         workoutRepository.fetchWorkouts(cb);
     };
 
-    function toResponseModel(workout) {
-        return workout.toObjLiteral();
-    }
-
     function removeWorkout(requestModel, done){
-        workoutRepository.removeWorkout(requestModel.ID, done)
+		
+				console.log("1.=== : " + requestModel.ISOStringDate);
+		console.log("2.=== : " + requestModel.title);
+		
+        workoutRepository.removeWorkout(new Date(requestModel.ISOStringDate), requestModel.title, done)
     }
 
-    function buildWorkoutFromRequest(requestModel){
+	
+	function reqToWkt(req) {
         var workout = Workout();
-        workout.init(UUID(), new Date(requestModel.ISOStringDate), requestModel.title, requestModel.comments);
+        workout.init(new Date(req.ISOStringDate), req.title, req.comments);
+		
         return workout;
     };
+	
+    function wktToRes(wkt) {
+        return wkt.toObjLiteral();
+    }
+
 
     return {
         init: init,

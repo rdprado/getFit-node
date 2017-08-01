@@ -1,17 +1,12 @@
-var Workout = function (ID, date, title, comments) {
+var Workout = function (date, title, comments) {
 
-    var _ID, _date, _title, _comments;
+    var _date, _title, _comments;
 
-    function init(id, date, title, comments) {
-        _ID = id;
+    function init(date, title, comments) {
         _date = date;
         _title = title;
         _comments = comments;
     };
-
-    function getID() {
-        return _ID;
-    }
 
     function getDate() {
         return _date;
@@ -31,7 +26,6 @@ var Workout = function (ID, date, title, comments) {
 
     return {
         init: init,
-        getID: getID,
         getDate: getDate,
         getTitle: getTitle,
         getComments: getComments,

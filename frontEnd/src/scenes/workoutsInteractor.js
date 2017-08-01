@@ -34,7 +34,9 @@ var WorkoutsInteractor = function() {
     function removeWorkout(requestModel) {
         console.log('remove');
 
-        workoutRepository.removeWorkout(requestModel.ID, (workouts)=>{
+		var date = new Date(requestModel.ISOStringDate)
+		
+        workoutRepository.removeWorkout(date, requestModel.title, (workouts)=>{
             interactorOutput.presentWorkouts(workouts.map(wktToRes))
         });
     };
