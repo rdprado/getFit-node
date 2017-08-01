@@ -1,36 +1,41 @@
 var Workout = function (ID, date, title, comments) {
 
-    var ID, datePerformed, workoutTitle, workoutComments;
+    var _ID, _date, _title, _comments;
 
     function init(id, date, title, comments) {
-        ID = id;
-        datePerformed = date;
-        workoutTitle = title;
-        workoutComments = comments;
+        _ID = id;
+        _date = date;
+        _title = title;
+        _comments = comments;
     };
 
     function getID() {
-        return ID;
+        return _ID;
     }
 
     function getDate() {
-        return datePerformed;
+        return _date;
     };
 
     function getTitle() {
-        return workoutTitle;
+        return _title;
     };
 
     function getComments() {
-        return workoutComments;
+        return _comments;
     };
+
+    function toObjLiteral() {
+        return {ISOStringDate: getDate().toISOString(), title: getTitle(), comments: getComments()};
+    }
 
     return {
         init: init,
         getID: getID,
         getDate: getDate,
         getTitle: getTitle,
-        getComments: getComments
+        getComments: getComments,
+        toObjLiteral: toObjLiteral
     }
 }
 

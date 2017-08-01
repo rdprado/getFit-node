@@ -11,14 +11,13 @@ var WorkoutsInteractor = function() {
     function changeToWeek(weekBegin, weekEnd){
 
         workoutRepository.getWorkouts((workouts)=>{
-			
-			var responseModelWorkouts = workoutsToResponse(workouts);
-			
+
             var responseModel = {
                 weekBegin: weekBegin,
                 weekEnd: weekEnd,
-                workouts: responseModelWorkouts 
+                workouts: workouts.map(wktToRes) 
             }
+
             interactorOutput.presentWeek(responseModel);
         });
     }
@@ -26,47 +25,40 @@ var WorkoutsInteractor = function() {
     function addWorkout(requestModel) {
         console.log('add');
 
-        var workout = requestToWorkout(requestModel);
-
-        workoutRepository.addWorkout(workout, (workouts)=> {
-            var responseModelWorkouts = workoutsToResponse(workouts);
-            interactorOutput.presentWorkouts(responseModelWorkouts)
+        workoutRepository.addWorkout(reqToWkt(requestModel), (workouts)=> {
+            interactorOutput.presentWorkouts(workouts.map(wktToRes))
         });
     };
-	
-	function requestToWorkout(requestModel){
-        var workout = Workout();
-		var date = new Date(requestModel.dateYear, requestModel.dateMonth - 1, requestModel.dateDayInMonth)
-        workout.init(date, requestModel.title, requestModel.comments);
-        return workout;
-    };
+
 
     function removeWorkout(requestModel) {
         console.log('remove');
 
         workoutRepository.removeWorkout(requestModel.ID, (workouts)=>{
-            var responseModelWorkouts = workoutsToResponse(workouts);
-            interactorOutput.presentWorkouts(responseModelWorkouts)
+            interactorOutput.presentWorkouts(workouts.map(wktToRes))
         });
     };
 
     function listWorkouts() {
         console.log('get');
-		workoutRepository.getWorkouts((workouts)=>{
-			var responseModelWorkouts = workoutsToResponse(workouts);
-            interactorOutput.presentWorkouts(responseModelWorkouts)
+        workoutRepository.getWorkouts((workouts)=> {
+            interactorOutput.presentWorkouts(workouts.map(wktToRes))
         });
     };
-	
-	function workoutsToResponse(workoutEntities) {
-		var wkts = [];
-		for(wkt in workoutEntities) {
-			wkts.push({date:workoutEntities[wkt].getDate(), title: workoutEntities[wkt].getTitle(), comments: workoutEntities[wkt].getComments()});
-		}
-		return wkts;
-	};
 
-    
+    // model transformation
+
+    function reqToWkt(req){
+        var workout = Workout();
+        var date = new Date(req.dateYear, req.dateMonth - 1, req.dateDayInMonth)
+        workout.init(date, req.title, req.comments);
+        return workout;
+    };
+
+    function wktToRes(workout) {
+        return workout.toObjLiteral();
+    }
+
 
     return {
         init: init,

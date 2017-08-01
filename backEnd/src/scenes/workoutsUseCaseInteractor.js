@@ -17,15 +17,17 @@ var WorkoutsUseCaseInteractor = function() {
 
     function getWorkouts(done){
         var cb = function(workouts) {
-            var responseModel = {
-                workouts: workouts
-            }
-            var viewModel = workoutsUseCaseInteractorOutput.presentGetWorkouts(responseModel);
-            done(viewModel);
+
+            var responseModel = {workouts: workouts.map(toResponseModel)}
+            done(workoutsUseCaseInteractorOutput.formatGetWorkouts(responseModel));
         };
 
         workoutRepository.fetchWorkouts(cb);
     };
+
+    function toResponseModel(workout) {
+        return workout.toObjLiteral();
+    }
 
     function removeWorkout(requestModel, done){
         workoutRepository.removeWorkout(requestModel.ID, done)

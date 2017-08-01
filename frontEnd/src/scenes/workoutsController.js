@@ -43,7 +43,7 @@ var workoutsController = new Vue({
 
             workoutsInteractor.addWorkout(requestModel);
         },
-        previousWeek: function() {
+        backOneWeek: function() {
 
             workoutsInteractor.previousWeek();
 
@@ -57,20 +57,18 @@ var workoutsController = new Vue({
             var weekEndCpy = new Date(weekEnd);
             weekStart = new Date(weekEndCpy.setDate(prevWeekFinalDay - 6));
 
-            workoutInteractor.changeToWeek(weekStart, weekEnd);
+            workoutInteractor.changeWeekAndListWeekExercises(weekStart, weekEnd);
         },
-        nextWeek: function() {
+        advanceOneWeek: function() {
 
             var nextWeekFirstDay = weekEnd.getDate() + 1;
-            // SET CURRENT WEEK NEW START
-            var weekEndCpy = new Date(weekEnd);				
+            var weekEndCpy = new Date(weekEnd);
             weekStart = new Date(weekEndCpy.setDate(nextWeekFirstDay));
 
-            // SET CURRENT WEEK NEW END
             var weekStartCpy = new Date(weekStart);
             weekEnd = new Date(weekStartCpy.setDate(nextWeekFirstDay + 6));
 
-            workoutsInteractor.changeToWeek(weekStart, weekEnd);
+            workoutsInteractor.(weekStart, weekEnd);
         }
     },
     mounted: function() {
@@ -100,7 +98,7 @@ var workoutsController = new Vue({
         // init ui
 
         workoutsInteractor.listWorkouts();
-        workoutsInteractor.changeToWeek(weekStart, weekEnd);
+        workoutsInteractor.listWeekWorkouts(weekStart, weekEnd);
     }
 })
 

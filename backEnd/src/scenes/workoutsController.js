@@ -12,8 +12,8 @@ var WorkoutsController = function WorkoutsController(){
     function makeRouts(router, workoutsUseCaseInteractor)
     {
         function sendWorkouts(res) {
-            var done = function(viewModel){  
-                res.json(viewModel.workouts);
+            var done = function(jsonModel){  
+                res.send(jsonModel.workouts);
             }
             workoutsUseCaseInteractor.getWorkouts(done);
         }

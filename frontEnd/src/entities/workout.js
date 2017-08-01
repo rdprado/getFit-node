@@ -20,10 +20,15 @@ var Workout = function () {
         return workoutComments;
     };
 
+    function toObjLiteral() {
+        return {date: getDate(), title: getTitle(), comments: getComments()};
+    }
+
     return {
         init: init,
         getDate: getDate,
         getTitle: getTitle,
-        getComments: getComments
+        getComments: getComments,
+        toObjLiteral, toObjLiteral
     }
 }
