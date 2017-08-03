@@ -19,11 +19,8 @@ var url = 'mongodb://localhost:27017/mydb';
 MongoClient.connect(url, function(err, database) {
 
     assert.equal(null, err);
-
-    console.dir(database)
-
-    var db = database;
-    start(db);
+    start(database);
+    console.log("Server ready");
 });
 
 function start(db) {
