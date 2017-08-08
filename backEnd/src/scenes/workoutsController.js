@@ -23,6 +23,11 @@ var WorkoutsController = function WorkoutsController(){
             console.log(res.json);
         });
 
+		router.get('/workoutTypes', function(req, res, next) {
+            var jsonModel = workoutsUseCaseInteractor.getWorkoutTypes();
+			res.send(jsonModel);
+        });
+		
         router.get('/workouts', function(req, res, next) {
             sendWorkouts(res);
         });
@@ -45,9 +50,6 @@ var WorkoutsController = function WorkoutsController(){
                 ISOStringDate: req.body.ISOStringDate,
 				title: req.body.title
             }
-			
-					console.log("1.....=== : " + requestModel.ISOStringDate);
-		console.log("2.....=== : " + requestModel.title);
 			
             workoutsUseCaseInteractor.removeWorkout(requestModel, ()=> {
                 sendWorkouts(res);

@@ -13,7 +13,11 @@ var WorkoutsUseCaseInteractor = function() {
         workoutRepository.addWorkout(reqToWkt(requestModel), done);
     };
 	
-    function getWorkouts(done){
+	function getWorkoutTypes() {
+		return workoutRepository.fetchWorkoutTypes();
+	}
+	
+    function getWorkouts(done) {
         var cb = function(workouts) {
 
             var responseModel = {workouts: workouts.map(wktToRes)}

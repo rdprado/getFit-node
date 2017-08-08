@@ -44,6 +44,10 @@ var WorkoutRepositoryMongoDB = function() {
 
         collectionExists(COLLECTION_NAME, collectionExistsAction, collectionDoesNotExistAction);
     }
+	
+	function fetchWorkoutTypes() {
+		return {workoutTypes : ["Running", "Cycling", "Weights"]};
+	}
 
     function docToWorkout(mongoDoc){
         var wkt = Workout();

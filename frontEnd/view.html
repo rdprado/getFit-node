@@ -14,10 +14,37 @@
         <input v-model="dateMonth" placeholder="Month">
         <input v-model="dateDay" placeholder="Day">
         <input v-model="dateYear" placeholder="Year">
+		<br>
+		<select v-model="selectedActivity">
+			<option disabled value="">Please select one</option>
+			<option>Running</option>
+			<option>Cycling</option>
+			<option>Weights</option>
+		</select>
         <br>
-        <input v-model="title" placeholder="Name">
+        <input v-model="title" placeholder="Title your activity">
         <br>
-        <textarea v-model="comments" placeholder="Comments"></textarea>
+		<div id = "distanceInput" v-show="showRunning()">
+			<input v-model="distance"  placeholder="Distance">
+			<span>km</span>
+			<br>
+			<input v-model="duration" placeholder="Duration">
+			<span>min</span>
+		</div>
+		<div id = "distanceInput" v-show="showCycling()">
+			<input v-model="distance"  placeholder="Distance">
+			<span>km</span>
+			<br>
+			<input v-model="duration" placeholder="Duration">
+			<span>min</span>
+		</div>
+		<div id = "distanceInput" v-show="showWeights()">
+			<input v-model="duration" placeholder="Duration">
+			<span>min</span>
+			
+		</div>
+		<br>
+        <textarea rows="4" cols="50" v-model="comments" placeholder="Comments"></textarea>
         <br>
         <button v-on:click="addWorkout">Add</button>
     </div>

@@ -13,9 +13,22 @@ var workoutsController = new Vue({
         comments: '',
         workouts: '',
         currentWeek: '',
-        daysData: ''
+        daysData: '',
+		comments: '',
+		selectedActivity: '',
+		distance: '',
+		duration: ''
     },
     methods: {
+		showRunning: function () {
+			return this.selectedActivity === "Running";
+		},
+		showCycling: function () {
+			return this.selectedActivity === "Cycling";
+		},
+		showWeights: function () {
+			return this.selectedActivity === "Weights";
+		},
         updateWeekUI: function(viewModel) {
             this.daysData = viewModel.daysData;
             this.currentWeek = viewModel.week;
