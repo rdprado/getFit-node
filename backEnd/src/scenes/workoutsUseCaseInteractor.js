@@ -13,13 +13,18 @@ var WorkoutsUseCaseInteractor = function() {
         workoutRepository.addWorkout(reqToWkt(requestModel), done);
     };
 	
-	function getWorkoutTypes() {
-		return workoutRepository.fetchWorkoutTypes();
+	function getWorkoutTypes(done) {
+		
+		var cb = function(workoutTypes) {
+			var responseModel = {workoutTypes: workoutTypes};
+			done(workoutsUseCaseInteractorOutput.formatWorkoutTypes(responseModel))
+		}
+		
+		workoutRepository.fetchWorkoutTypes(cb);
 	}
 	
     function getWorkouts(done) {
         var cb = function(workouts) {
-
             var responseModel = {workouts: workouts.map(wktToRes)}
             done(workoutsUseCaseInteractorOutput.formatGetWorkouts(responseModel));
         };
@@ -28,10 +33,6 @@ var WorkoutsUseCaseInteractor = function() {
     };
 
     function removeWorkout(requestModel, done){
-		
-				console.log("1.=== : " + requestModel.ISOStringDate);
-		console.log("2.=== : " + requestModel.title);
-		
         workoutRepository.removeWorkout(new Date(requestModel.ISOStringDate), requestModel.title, done)
     }
 
@@ -51,6 +52,7 @@ var WorkoutsUseCaseInteractor = function() {
     return {
         init: init,
         addWorkout: addWorkout,
+		getWorkoutTypes: getWorkoutTypes,
         getWorkouts: getWorkouts,
         removeWorkout: removeWorkout
     };

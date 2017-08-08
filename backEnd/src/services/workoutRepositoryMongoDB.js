@@ -45,8 +45,8 @@ var WorkoutRepositoryMongoDB = function() {
         collectionExists(COLLECTION_NAME, collectionExistsAction, collectionDoesNotExistAction);
     }
 	
-	function fetchWorkoutTypes() {
-		return {workoutTypes : ["Running", "Cycling", "Weights"]};
+	function fetchWorkoutTypes(done) {
+		done(["Running", "Cycling", "Weights"]);
 	}
 
     function docToWorkout(mongoDoc){
@@ -122,6 +122,7 @@ var WorkoutRepositoryMongoDB = function() {
     return {
         init: init,
         addWorkout: addWorkout,
+		fetchWorkoutTypes: fetchWorkoutTypes,
         fetchWorkouts: fetchWorkouts,
         removeWorkout: removeWorkout
     };

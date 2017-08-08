@@ -24,8 +24,14 @@ var WorkoutsController = function WorkoutsController(){
         });
 
 		router.get('/workoutTypes', function(req, res, next) {
-            var jsonModel = workoutsUseCaseInteractor.getWorkoutTypes();
-			res.send(jsonModel);
+			
+			var done = function(jsonModel) {
+				
+				console.log("6 ----")
+				res.send(jsonModel);
+			}
+			
+            workoutsUseCaseInteractor.getWorkoutTypes(done);
         });
 		
         router.get('/workouts', function(req, res, next) {

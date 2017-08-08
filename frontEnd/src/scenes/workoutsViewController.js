@@ -11,23 +11,19 @@ var workoutsController = new Vue({
         dateYear: 1999,
         title: '',
         comments: '',
-        workouts: '',
+        workouts: [],
         currentWeek: '',
         daysData: '',
 		comments: '',
 		selectedActivity: '',
+		workoutTypes: [],
 		distance: '',
-		duration: ''
+		duration: '',
+		
     },
     methods: {
-		showRunning: function () {
-			return this.selectedActivity === "Running";
-		},
-		showCycling: function () {
-			return this.selectedActivity === "Cycling";
-		},
-		showWeights: function () {
-			return this.selectedActivity === "Weights";
+		showActivity(activityName) {
+			return this.selectedActivity === activityName;
 		},
         updateWeekUI: function(viewModel) {
             this.daysData = viewModel.daysData;
@@ -36,6 +32,9 @@ var workoutsController = new Vue({
         updateWorkoutsUI: function(viewModel) {
             this.workouts = viewModel;
         },
+		updateWorkoutTypes: function(viewModel) {
+			this.workoutTypes = viewModel;
+		},
         removeWorkout: function(date, title) {
             var requestModel = {
                 ISOStringDate: date,
@@ -114,6 +113,8 @@ var workoutsController = new Vue({
 
         workoutsInteractor.listWorkouts();
         workoutsInteractor.changeToWeek(weekStart, weekEnd);
+		
+		workoutsInteractor.listWorkoutTypes();
     }
 })
 

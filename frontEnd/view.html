@@ -16,6 +16,7 @@
         <input v-model="dateYear" placeholder="Year">
 		<br>
 		<select v-model="selectedActivity">
+			<option v-for="workoutType in workoutTypes">{{workoutType}}</option>
 			<option disabled value="">Please select one</option>
 			<option>Running</option>
 			<option>Cycling</option>
@@ -24,21 +25,21 @@
         <br>
         <input v-model="title" placeholder="Title your activity">
         <br>
-		<div id = "distanceInput" v-show="showRunning()">
+		<div id = "distanceInput" v-show="showActivity('Running')">
 			<input v-model="distance"  placeholder="Distance">
 			<span>km</span>
 			<br>
 			<input v-model="duration" placeholder="Duration">
 			<span>min</span>
 		</div>
-		<div id = "distanceInput" v-show="showCycling()">
+		<div id = "distanceInput" v-show="showActivity('Cycling')">
 			<input v-model="distance"  placeholder="Distance">
 			<span>km</span>
 			<br>
 			<input v-model="duration" placeholder="Duration">
 			<span>min</span>
 		</div>
-		<div id = "distanceInput" v-show="showWeights()">
+		<div id = "distanceInput" v-show="showActivity('Weights')">
 			<input v-model="duration" placeholder="Duration">
 			<span>min</span>
 			

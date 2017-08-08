@@ -1,7 +1,28 @@
 var WorkoutRepositoryAxios = function() {
+	
+	var workoutTypes = [];
+	
+	function init() {
+		workoutTypes = getWorkoutTypesFromServer();
+	}
 
-    var workouts = [];
-
+	function getWorkoutTypes(done) {
+		if(workoutTypes.length == 0)
+			getWorkoutTypesFromServer(done);
+		else
+			done(workoutTypes);
+	}
+	
+	function getWorkoutTypesFromServer(done) {
+		axios.get('http://localhost:3000/workoutTypes').then(response => {
+			 workoutTypes = response.data.workoutTypes; 
+			 done(workoutTypes);
+             console.log('sucess');
+         }).catch(error => {
+             console.log(error);
+         });
+	}
+	
     function getWorkouts(done) {
         axios.get('http://localhost:3000/workouts').then(response => {
 			var workoutsResponse = response.data; 
@@ -11,7 +32,7 @@ var WorkoutRepositoryAxios = function() {
             console.log(error);
         });
     };
-
+	
     function addWorkout(workout, done) {
         axios.post('http://localhost:3000/workouts/add', {
             ISOStringDate:workout.getDate().toISOString(), 
@@ -42,8 +63,10 @@ var WorkoutRepositoryAxios = function() {
     }
 
     return {
-        getWorkouts: getWorkouts,
-        addWorkout: addWorkout,
-        removeWorkout: removeWorkout
+		init,
+		getWorkoutTypes,
+        getWorkouts,
+        addWorkout,
+        removeWorkout
     }
 }

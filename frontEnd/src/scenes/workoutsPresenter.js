@@ -24,6 +24,11 @@ var WorkoutsPresenter = function() {
 
         workoutsPresenterOutput.updateWeekUI(viewModel);
     }
+	
+	function presentWorkoutTypes(responseModel) {
+		viewModel = responseModel;
+		workoutsPresenterOutput.updateWorkoutTypes(viewModel);
+	}
 
     function presentWorkouts(responseModel) {
         viewModel = responseModel;
@@ -72,6 +77,7 @@ var WorkoutsPresenter = function() {
 
     return {
         init: init,
+		presentWorkoutTypes: presentWorkoutTypes,
         presentWorkouts: presentWorkouts,
         presentWeek: presentWeek
     }

@@ -22,6 +22,13 @@ var WorkoutsInteractor = function() {
         });
     }
 
+	function listWorkoutTypes() {
+		console.log("list types")
+		var workoutTypes = workoutRepository.getWorkoutTypes((workoutTypes)=>{
+			interactorOutput.presentWorkoutTypes(workoutTypes);
+		});
+	}
+	
     function addWorkout(requestModel) {
         console.log('add');
 
@@ -64,6 +71,7 @@ var WorkoutsInteractor = function() {
 
     return {
         init: init,
+		listWorkoutTypes: listWorkoutTypes,
         listWorkouts: listWorkouts,
         addWorkout: addWorkout,
         removeWorkout: removeWorkout,
