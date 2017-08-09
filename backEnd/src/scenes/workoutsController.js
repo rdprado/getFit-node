@@ -13,7 +13,7 @@ var WorkoutsController = function WorkoutsController(){
     {
         function sendWorkouts(res) {
             var done = function(jsonModel){  
-                res.send(jsonModel.workouts);
+                res.send(jsonModel);
             }
             workoutsUseCaseInteractor.getWorkouts(done);
         }
@@ -26,11 +26,8 @@ var WorkoutsController = function WorkoutsController(){
 		router.get('/workoutTypes', function(req, res, next) {
 			
 			var done = function(jsonModel) {
-				
-				console.log("6 ----")
 				res.send(jsonModel);
 			}
-			
             workoutsUseCaseInteractor.getWorkoutTypes(done);
         });
 		

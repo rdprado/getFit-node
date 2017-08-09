@@ -46,7 +46,9 @@ var WorkoutRepositoryMongoDB = function() {
     }
 	
 	function fetchWorkoutTypes(done) {
-		done(["Running", "Cycling", "Weights"]);
+		var wktTypes = ["Running", "Cycling", "Weights", "Rowing"]
+		wktTypes.sort((a, b) => a.localeCompare(b));
+		done(wktTypes);
 	}
 
     function docToWorkout(mongoDoc){

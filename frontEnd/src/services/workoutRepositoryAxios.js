@@ -15,7 +15,7 @@ var WorkoutRepositoryAxios = function() {
 	
 	function getWorkoutTypesFromServer(done) {
 		axios.get('http://localhost:3000/workoutTypes').then(response => {
-			 workoutTypes = response.data.workoutTypes; 
+			 workoutTypes = response.data; 
 			 done(workoutTypes);
              console.log('sucess');
          }).catch(error => {
