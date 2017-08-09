@@ -1,21 +1,21 @@
-var WorkoutsController = function WorkoutsController(){
+var ActivitiesController = function ActivitiesController(){
 
-    var routeMaker, workoutsuseCaseInteractor;
+    var routeMaker, activitiesUseCaseInteractor;
 
     function init(router, useCaseInteractor) {
         routeMaker = router;
-        workoutsUseCaseInteractor = useCaseInteractor;
+        activitiesUseCaseInteractor = useCaseInteractor;
 
-        makeRouts(router, workoutsUseCaseInteractor);
+        makeRouts(router, activitiesUseCaseInteractor);
     }
 
-    function makeRouts(router, workoutsUseCaseInteractor)
+    function makeRouts(router, activitiesUseCaseInteractor)
     {
-        function sendWorkouts(res) {
+        function sendActivities(res) {
             var done = function(jsonModel){  
                 res.send(jsonModel);
             }
-            workoutsUseCaseInteractor.getWorkouts(done);
+            activitiesUseCaseInteractor.getActivities(done);
         }
 
         router.get('/vuetest', function(req, res, next) {
@@ -23,19 +23,19 @@ var WorkoutsController = function WorkoutsController(){
             console.log(res.json);
         });
 
-		router.get('/workoutTypes', function(req, res, next) {
+		router.get('/activityTypes', function(req, res, next) {
 			
 			var done = function(jsonModel) {
 				res.send(jsonModel);
 			}
-            workoutsUseCaseInteractor.getWorkoutTypes(done);
+            activitiesUseCaseInteractor.getActivityTypes(done);
         });
 		
-        router.get('/workouts', function(req, res, next) {
-            sendWorkouts(res);
+        router.get('/activities', function(req, res, next) {
+            sendActivities(res);
         });
 
-        router.post('/workouts/add', function(req, res, next) {
+        router.post('/activities/add', function(req, res, next) {
 		
             var requestModel = {
                 ISOStringDate: req.body.ISOStringDate,
@@ -43,19 +43,19 @@ var WorkoutsController = function WorkoutsController(){
                 comments: req.body.comments
             }
 			
-            workoutsUseCaseInteractor.addWorkout(requestModel, ()=>{
-                sendWorkouts(res);
+            activitiesUseCaseInteractor.addActivity(requestModel, ()=>{
+                sendActivities(res);
             });
         });
 
-        router.post('/workouts/remove', function(req, res, next){
+        router.post('/activities/remove', function(req, res, next){
             var requestModel = {
                 ISOStringDate: req.body.ISOStringDate,
 				title: req.body.title
             }
 			
-            workoutsUseCaseInteractor.removeWorkout(requestModel, ()=> {
-                sendWorkouts(res);
+            activitiesUseCaseInteractor.removeActivity(requestModel, ()=> {
+                sendActivities(res);
             });
 
         });
@@ -66,4 +66,4 @@ var WorkoutsController = function WorkoutsController(){
     };
 }
 
-module.exports = WorkoutsController;
+module.exports = ActivitiesController;

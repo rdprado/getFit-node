@@ -1,38 +1,38 @@
-var WorkoutsPresenter = function() {
+var ActivitiesPresenter = function() {
     var daysOfWeek  = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
-    var workoutsPresenterOutput;
+    var activitiesPresenterOutput;
 
     function init(presenterOutput) {
-        workoutsPresenterOutput = presenterOutput;
+        activitiesPresenterOutput = presenterOutput;
     }
 
     function presentWeek(responseModel) {
         var formattedWeek = formatWeekInterval(responseModel.weekBegin, responseModel.weekEnd);
 
-        var wksWithSimplifiedDate = responseModel.workouts.map((wkt)=>{
-            return {date:dateToMMDDYYYY(new Date(wkt.ISOStringDate)), title: wkt.title, comments: wkt.comments}
+        var activitiesWithSimplifiedDate = responseModel.activities.map((activity)=>{
+            return {date:dateToMMDDYYYY(new Date(activity.ISOStringDate)), title: activity.title, comments: activity.comments}
         });
 
-        var wktsBySimplifiedDate = _.groupBy(wksWithSimplifiedDate, 'date');
-        var daysData = formatDaysDataForCurrentWeek(wktsBySimplifiedDate);
+        var activitiesBySimplifiedDate = _.groupBy(activitiesWithSimplifiedDate, 'date');
+        var daysData = formatDaysDataForCurrentWeek(activitiesBySimplifiedDate);
 
         var viewModel = {
             week: formattedWeek,
             daysData: daysData
         }
 
-        workoutsPresenterOutput.updateWeekUI(viewModel);
+        activitiesPresenterOutput.updateWeekUI(viewModel);
     }
 	
-	function presentWorkoutTypes(responseModel) {
+	function presentActivityTypes(responseModel) {
 		viewModel = responseModel;
-		workoutsPresenterOutput.updateWorkoutTypes(viewModel);
+		activitiesPresenterOutput.updateActivityTypes(viewModel);
 	}
 
-    function presentWorkouts(responseModel) {
+    function presentActivities(responseModel) {
         viewModel = responseModel;
-        workoutsPresenterOutput.updateWorkoutsUI(viewModel);
+        activitiesPresenterOutput.updateActivitiesUI(viewModel);
     }
 
     function formatWeekInterval(beginDate, endDate) {
@@ -47,7 +47,7 @@ var WorkoutsPresenter = function() {
         return curr_date + "/" + curr_month + "/" + curr_year;	
     }
 
-     function formatDaysDataForCurrentWeek(workoutsByDate){
+     function formatDaysDataForCurrentWeek(activitiesByDate){
         var weekStartCpy = new Date(weekStart);
 
         var daysDataViewModel = [];
@@ -56,10 +56,10 @@ var WorkoutsPresenter = function() {
             daysDataViewModel[i] = {weekDayName: daysOfWeek[i], activities: []};
 
             var currDate = new Date(weekStartCpy.setDate(weekStart.getDate() + i));
-            var workouts = workoutsByDate[dateToMMDDYYYY(currDate)];
-            if(workouts) {
-                for(wkt in workouts) {
-                    daysDataViewModel[i].activities.push({title: workouts[wkt].title, duration:'1 hour'});
+            var activities = activitiesByDate[dateToMMDDYYYY(currDate)];
+            if(activities) {
+                for(activity in activities) {
+                    daysDataViewModel[i].activities.push({title: activities[activity].title, duration:'1 hour'});
                 }
             }
         }
@@ -77,8 +77,8 @@ var WorkoutsPresenter = function() {
 
     return {
         init: init,
-		presentWorkoutTypes: presentWorkoutTypes,
-        presentWorkouts: presentWorkouts,
+		presentActivityTypes: presentActivityTypes,
+        presentActivities: presentActivities,
         presentWeek: presentWeek
     }
 }

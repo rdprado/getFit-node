@@ -1,9 +1,9 @@
 var weekStart = "";
 var weekEnd = "";
 
-var workoutsInteractor;
+var activitiesInteractor;
 
-var workoutsController = new Vue({
+var activitiesController = new Vue({
     el: '#my_view',
     data: {
         dateDay: 2,
@@ -11,12 +11,12 @@ var workoutsController = new Vue({
         dateYear: 1999,
         title: '',
         comments: '',
-        workouts: [],
+        activities: [],
         currentWeek: '',
         daysData: '',
 		comments: '',
 		selectedActivity: '',
-		workoutTypes: [],
+		activityTypes: [],
 		distance: '',
 		duration: '',
 		
@@ -29,22 +29,22 @@ var workoutsController = new Vue({
             this.daysData = viewModel.daysData;
             this.currentWeek = viewModel.week;
         },
-        updateWorkoutsUI: function(viewModel) {
-            this.workouts = viewModel;
+        updateActivitiesUI: function(viewModel) {
+            this.activities = viewModel;
         },
-		updateWorkoutTypes: function(viewModel) {
-			this.workoutTypes = viewModel;
+		updateActivityTypes: function(viewModel) {
+			this.activityTypes = viewModel;
 		},
-        removeWorkout: function(date, title) {
+        removeActivity: function(date, title) {
             var requestModel = {
                 ISOStringDate: date,
                 title: title
             }
 
-            workoutsInteractor.removeWorkout(requestModel);
+            activitiesInteractor.removeActivity(requestModel);
         },
 
-        addWorkout: function() {
+        addActivity: function() {
             var requestModel = {
                 dateYear: this.dateYear,
 				dateMonth: this.dateMonth,
@@ -53,11 +53,11 @@ var workoutsController = new Vue({
                 comments: this.comments
             }
 
-            workoutsInteractor.addWorkout(requestModel);
+            activitiesInteractor.addActivity(requestModel);
         },
         previousWeek: function() {
 
-            workoutsInteractor.previousWeek();
+            activitiesInteractor.previousWeek();
 
             var prevWeekFinalDay = weekStart.getDate() - 1;
 
@@ -69,7 +69,7 @@ var workoutsController = new Vue({
             var weekEndCpy = new Date(weekEnd);
             weekStart = new Date(weekEndCpy.setDate(prevWeekFinalDay - 6));
 
-            workoutInteractor.changeToWeek(weekStart, weekEnd);
+            activitiesInteractor.changeToWeek(weekStart, weekEnd);
         },
         nextWeek: function() {
 
@@ -82,15 +82,15 @@ var workoutsController = new Vue({
             var weekStartCpy = new Date(weekStart);
             weekEnd = new Date(weekStartCpy.setDate(nextWeekFirstDay + 6));
 
-            workoutsInteractor.changeToWeek(weekStart, weekEnd);
+            activitiesInteractor.changeToWeek(weekStart, weekEnd);
         }
     },
     mounted: function() {
-        var workoutRepository = WorkoutRepositoryAxios();
-        var workoutsPresenter = WorkoutsPresenter();
-        workoutsPresenter.init(this);
-        workoutsInteractor = WorkoutsInteractor();
-        workoutsInteractor.init(workoutRepository, workoutsPresenter);
+        var activityRepository = ActivityRepositoryAxios();
+        var activitiesPresenter = ActivitiesPresenter();
+        activitiesPresenter.init(this);
+        activitiesInteractor = ActivitiesInteractor();
+        activitiesInteractor.init(activityRepository, activitiesPresenter);
 
         var now = new Date();
         this.dateDay =  now.getDate();
@@ -111,10 +111,10 @@ var workoutsController = new Vue({
 
         // init ui
 
-        workoutsInteractor.listWorkouts();
-        workoutsInteractor.changeToWeek(weekStart, weekEnd);
+        activitiesInteractor.listActivities();
+        activitiesInteractor.changeToWeek(weekStart, weekEnd);
 		
-		workoutsInteractor.listWorkoutTypes();
+		activitiesInteractor.listActivityTypes();
     }
 })
 

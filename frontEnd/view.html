@@ -2,21 +2,21 @@
 <script src="./node_modules/axios/dist/axios.js"></script>
 <script src="./node_modules/lodash/lodash.js"></script>
 
-<script src="./src/entities/workout.js"></script>
-<script src="./src/services/workoutRepositoryAxios.js"></script>
-<script src="./src/scenes/workoutsInteractor.js"></script>
-<script src="./src/scenes/workoutsPresenter.js"></script>
+<script src="./src/entities/activity.js"></script>
+<script src="./src/services/activityRepositoryAxios.js"></script>
+<script src="./src/scenes/activitiesInteractor.js"></script>
+<script src="./src/scenes/activitiesPresenter.js"></script>
 
 <div id="my_view">
 
-    <div id="addWorkout">
-        <p> Add Workout </p>
+    <div id="addActivity">
+        <p> Add Activity </p>
         <input v-model="dateMonth" placeholder="Month">
         <input v-model="dateDay" placeholder="Day">
         <input v-model="dateYear" placeholder="Year">
 		<br>
 		<select v-model="selectedActivity">
-			<option v-for="workoutType in workoutTypes">{{workoutType}}</option>
+			<option v-for="activityType in activityTypes">{{activityType}}</option>
 			<option disabled value="">Please select one</option>
 			<option>Running</option>
 			<option>Cycling</option>
@@ -47,11 +47,11 @@
 		<br>
         <textarea rows="4" cols="50" v-model="comments" placeholder="Comments"></textarea>
         <br>
-        <button v-on:click="addWorkout">Add</button>
+        <button v-on:click="addActivity">Add</button>
     </div>
     <br>
 
-    <div id="weeklyWorkouts">
+    <div id="weeklyActivities">
         <div id="weekControls">
             <button v-on:click="previousWeek"> < </button>
             <span>{{ currentWeek }} </span>
@@ -63,7 +63,7 @@
             <table id="daysData">
                 <tr>
                     <th>Day</th>
-                    <th>Workouts</th>
+                    <th>Activities</th>
                     <th>Duration</th>
                 </tr>
                 <tr v-for="dayData in daysData">
@@ -89,16 +89,16 @@
 
     </div>
 
-    <div id="allWorkouts">
-        <p> All Workouts</p>
+    <div id="allActivities">
+        <p> All Activities</p>
 
-        <ul id="workouts">
-            <li v-for="workout in workouts">
-                <p>Date: {{ workout.ISOStringDate}} | Name: {{ workout.title  }} | Comments: {{ workout.comments}}</p>
-                <button v-on:click="removeWorkout(workout.ISOStringDate, workout.title)">X</button>
+        <ul id="activities">
+            <li v-for="activity in activities">
+                <p>Date: {{ activity.ISOStringDate}} | Name: {{ activity.title  }} | Comments: {{ activity.comments}}</p>
+                <button v-on:click="removeActivity(activity.ISOStringDate, activity.title)">X</button>
             </li>
         </ul>
     </div>
 </div>
 
-<script src="./src/scenes/workoutsViewController.js"></script>
+<script src="./src/scenes/activitiesViewController.js"></script>

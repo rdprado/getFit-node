@@ -1,19 +1,19 @@
-var WorkoutRepositoryMongoDB = require('./src/services/workoutRepositoryMongoDB')
+var ActivityRepositoryMongoDB = require('./src/services/activityRepositoryMongoDB')
 
-var WorkoutsUseCaseInteractor = require('./src/scenes/workoutsUseCaseInteractor')
-var WorkoutsController = require('./src/scenes/workoutsController')
-var WorkoutsPresenter = require('./src/scenes/workoutsPresenter')
+var ActivitiesUseCaseInteractor = require('./src/scenes/activitiesUseCaseInteractor')
+var ActivitiesController = require('./src/scenes/activitiesController')
+var ActivitiesPresenter = require('./src/scenes/activitiesPresenter')
 
 exports.inject = function(router, db) {
-    var workoutRepository = WorkoutRepositoryMongoDB();
-    workoutRepository.init(db);
+    var activityRepository = ActivityRepositoryMongoDB();
+    activityRepository.init(db);
 
-    var workoutsPresenter = WorkoutsPresenter();
+    var activitiesPresenter = ActivitiesPresenter();
 
-    var workoutsUseCaseInteractor = WorkoutsUseCaseInteractor();
-    workoutsUseCaseInteractor.init(workoutRepository, workoutsPresenter);
+    var activitiesUseCaseInteractor = ActivitiesUseCaseInteractor();
+    activitiesUseCaseInteractor.init(activityRepository, activitiesPresenter);
 
-    var workoutsController = WorkoutsController();
-    workoutsController.init(router, workoutsUseCaseInteractor)
+    var activitiesController = ActivitiesController();
+    activitiesController.init(router, activitiesUseCaseInteractor)
 }
 

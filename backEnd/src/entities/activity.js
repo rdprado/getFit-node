@@ -1,4 +1,4 @@
-var Workout = function (date, title, comments) {
+var Activity = function (date, title, comments) {
 
     var _date, _title, _comments;
 
@@ -33,4 +33,4 @@ var Workout = function (date, title, comments) {
     }
 }
 
-module.exports = Workout;
+module.exports = Activity;

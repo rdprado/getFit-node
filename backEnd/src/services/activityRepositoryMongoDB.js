@@ -1,17 +1,17 @@
-var Workout = require('../entities/workout');
+var Activity = require('../entities/activity');
 
-var WorkoutRepositoryMongoDB = function() {
+var ActivityRepositoryMongoDB = function() {
 
     var database;
-    const COLLECTION_NAME = 'workouts';
+    const COLLECTION_NAME = 'activities';
 
     function init(db) {
         database = db;
     };
 
-    function addWorkout(workout, done) {
+    function addActivity(activity, done) {
 
-        var doc = {date: workout.getDate(), title: workout.getTitle(), comments: workout.getComments()};
+        var doc = {date: activity.getDate(), title: activity.getTitle(), comments: activity.getComments()};
 
         var collectionExistsAction = (collInfo)=> {
             insertInCollection(collInfo.name, doc, ()=> {
@@ -31,10 +31,10 @@ var WorkoutRepositoryMongoDB = function() {
         collectionExists(COLLECTION_NAME, collectionExistsAction, collectionDoesNotExistAction);
     }
 
-    function fetchWorkouts(done) {
+    function fetchActivities(done) {
         var collectionExistsAction = (collInfo)=> {
             fetchDocsFromCollection(collInfo.name, (docs)=>{
-                done(docs.map(docToWorkout));
+                done(docs.map(docToActivity));
             });
         }
 
@@ -45,19 +45,19 @@ var WorkoutRepositoryMongoDB = function() {
         collectionExists(COLLECTION_NAME, collectionExistsAction, collectionDoesNotExistAction);
     }
 	
-	function fetchWorkoutTypes(done) {
-		var wktTypes = ["Running", "Cycling", "Weights", "Rowing"]
-		wktTypes.sort((a, b) => a.localeCompare(b));
-		done(wktTypes);
+	function fetchActivityTypes(done) {
+		var activityTypes = ["Running", "Cycling", "Weights", "Rowing"]
+		activityTypes.sort((a, b) => a.localeCompare(b));
+		done(activityTypes);
 	}
 
-    function docToWorkout(mongoDoc){
-        var wkt = Workout();
-        wkt.init(mongoDoc.date, mongoDoc.title, mongoDoc.comments);
-        return wkt;
+    function docToActivity(mongoDoc){
+        var activity = Activity();
+        activity.init(mongoDoc.date, mongoDoc.title, mongoDoc.comments);
+        return activity;
     }
 
-    function removeWorkout(date, title, done) {
+    function removeActivity(date, title, done) {
         database.collection(COLLECTION_NAME, {strict:true}, function(err, col) {
             if(!err){
                 col.deleteOne({date: date, title: title}).then(function(result){
@@ -123,11 +123,11 @@ var WorkoutRepositoryMongoDB = function() {
 
     return {
         init: init,
-        addWorkout: addWorkout,
-		fetchWorkoutTypes: fetchWorkoutTypes,
-        fetchWorkouts: fetchWorkouts,
-        removeWorkout: removeWorkout
+        addActivity: addActivity,
+		fetchActivityTypes: fetchActivityTypes,
+        fetchActivities: fetchActivities,
+        removeActivity: removeActivity
     };
 }
 
-module.exports = WorkoutRepositoryMongoDB;
+module.exports = ActivityRepositoryMongoDB;

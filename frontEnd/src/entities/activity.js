@@ -1,11 +1,11 @@
-var Workout = function () {
+var Activity = function () {
 
-    var datePerformed, workoutTitle, workoutComments;
+    var datePerformed, activityTitle, activityComments;
 
     function init(date, title, comments) {
         datePerformed = date;
-        workoutTitle = title;
-        workoutComments = comments;
+        activityTitle = title;
+        activityComments = comments;
     };
 
     function getDate() {
@@ -13,11 +13,11 @@ var Workout = function () {
     };
 
     function getTitle() {
-        return workoutTitle;
+        return activityTitle;
     };
 
     function getComments() {
-        return workoutComments;
+        return activityComments;
     };
 
     function toObjLiteral() {
