@@ -20,16 +20,11 @@ var Activity = function (date, title, comments) {
         return _comments;
     };
 
-    function toObjLiteral() {
-        return {ISOStringDate: getDate().toISOString(), title: getTitle(), comments: getComments()};
-    }
-
     return {
         init: init,
         getDate: getDate,
         getTitle: getTitle,
-        getComments: getComments,
-        toObjLiteral: toObjLiteral
+        getComments: getComments
     }
 }
 

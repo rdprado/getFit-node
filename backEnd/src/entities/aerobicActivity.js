@@ -16,13 +16,8 @@ var AerobicActivity = function () {
         return distance;
     };
 	
-	function toObjLiteral() {
-        return {ISOStringDate: publicAPI.getDate().toISOString(), title: publicAPI.getTitle(), comments: publicAPI.getComments(), distance: getDistance()};
-    }
-	
 	publicAPI.initAerobicActivity = initAerobicActivity;
     publicAPI.getDistance = getDistance;
-	publicAPI.toObjLiteral = toObjLiteral;
 		
 	return publicAPI;
 	

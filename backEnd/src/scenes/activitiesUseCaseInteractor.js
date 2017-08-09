@@ -45,9 +45,8 @@ var ActivitiesUseCaseInteractor = function() {
     };
 	
     function activityToRes(activity) {
-        return activity.toObjLiteral();
+		return {ISOStringDate: activity.getDate().toISOString(), title: activity.getTitle(), comments: activity.getComments()};
     }
-
 
     return {
         init: init,

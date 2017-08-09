@@ -10,10 +10,32 @@ var ActivityRepositoryMongoDB = function() {
     };
 
     function addActivity(activity, done) {
-
         var doc = {date: activity.getDate(), title: activity.getTitle(), comments: activity.getComments()};
+		addDoc(doc, done);
+    }
+	
+	function removeActivity(date, title, done) {
+		var filter = {date: date, title: title};
+        removeDoc(filter, done);
+    }
+	
+    function fetchActivities(done) {
+        fetchDocs(done);
+    }
+	
+	function fetchActivityTypes(done) {
+		var activityTypes = ["Running", "Cycling", "Weights", "Rowing"]
+		activityTypes.sort((a, b) => a.localeCompare(b));
+		done(activityTypes);
+	}
 
-        var collectionExistsAction = (collInfo)=> {
+	/////////////////////
+    // mongo helpers
+
+	// INSERTION
+	
+	function addDoc(doc, done) {
+		var collectionExistsAction = (collInfo)=> {
             insertInCollection(collInfo.name, doc, ()=> {
                 done()
             });
@@ -29,50 +51,9 @@ var ActivityRepositoryMongoDB = function() {
         }
 
         collectionExists(COLLECTION_NAME, collectionExistsAction, collectionDoesNotExistAction);
-    }
-
-    function fetchActivities(done) {
-        var collectionExistsAction = (collInfo)=> {
-            fetchDocsFromCollection(collInfo.name, (docs)=>{
-                done(docs.map(docToActivity));
-            });
-        }
-
-        var collectionDoesNotExistAction = ()=> {
-            done([]);
-        }
-
-        collectionExists(COLLECTION_NAME, collectionExistsAction, collectionDoesNotExistAction);
-    }
-	
-	function fetchActivityTypes(done) {
-		var activityTypes = ["Running", "Cycling", "Weights", "Rowing"]
-		activityTypes.sort((a, b) => a.localeCompare(b));
-		done(activityTypes);
 	}
-
-    function docToActivity(mongoDoc){
-        var activity = Activity();
-        activity.init(mongoDoc.date, mongoDoc.title, mongoDoc.comments);
-        return activity;
-    }
-
-    function removeActivity(date, title, done) {
-        database.collection(COLLECTION_NAME, {strict:true}, function(err, col) {
-            if(!err){
-                col.deleteOne({date: date, title: title}).then(function(result){
-                    done();
-                    console.log('removed: ' + result.deletedCount);
-                }).catch(function(err){
-                    console.log(err);
-                });
-            } 
-        });
-    }
-
-    // mongo helpers
-
-    function insertInCollection(collectionName, doc, done){
+	
+	function insertInCollection(collectionName, doc, done){
         database.collection(collectionName, {strict:true}, function(err, col) {
             if(!err){
                 col.insertOne(doc, function (err, result) {
@@ -84,19 +65,47 @@ var ActivityRepositoryMongoDB = function() {
             }
         });
     }
-
-    function collectionExists(collectionName, colExistsAction, colDoesNotExistAction) {
-        database.listCollections({name: COLLECTION_NAME})
-        .next(function(err, collInfo) {
-            if(collInfo) {
-                colExistsAction(collInfo)
-            } else {
-                colDoesNotExistAction();
-            }
-        })
+	
+	function createCollection(name, done) {
+        database.createCollection(name).then(function(collection) {
+            done(collection);
+        }).catch(function(err){
+            console.log("Error create collection: " + err);
+        });
     }
+	
+	// DELETION
+	
+	function removeDoc(filter, done) {
+		database.collection(COLLECTION_NAME, {strict:true}, function(err, col) {
+            if(!err){
+                col.deleteOne(filter).then(function(result){
+                    done();
+                    console.log('removed: ' + result.deletedCount);
+                }).catch(function(err){
+                    console.log(err);
+                });
+            } 
+        });
+	}
+	
+	// RETRIEVAL
+	
+	function fetchDocs(done) {
+		var collectionExistsAction = (collInfo)=> {
+            fetchDocsFromCollection(collInfo.name, (docs)=>{
+                done(docs.map(docToActivity));
+            });
+        }
 
-    function fetchDocsFromCollection(collectionName, done){
+        var collectionDoesNotExistAction = ()=> {
+            done([]);
+        }
+
+        collectionExists(COLLECTION_NAME, collectionExistsAction, collectionDoesNotExistAction);
+	}
+	
+	function fetchDocsFromCollection(collectionName, done){
         database.collection(collectionName, {strict:true}, function(err, col) {
             if(!err){
                 col.find({}).toArray().then(function(docs){
@@ -110,16 +119,27 @@ var ActivityRepositoryMongoDB = function() {
             }
         });
     }
-
-    function createCollection(name, done) {
-        database.createCollection(name).then(function(collection) {
-            done(collection);
-        }).catch(function(err){
-            console.log("Error create collection: " + err);
-        });
+	
+	function docToActivity(mongoDoc){
+        var activity = Activity();
+        activity.init(mongoDoc.date, mongoDoc.title, mongoDoc.comments);
+        return activity;
+    }
+	
+	// HELPERS
+	
+    function collectionExists(collectionName, colExistsAction, colDoesNotExistAction) {
+        database.listCollections({name: COLLECTION_NAME})
+        .next(function(err, collInfo) {
+            if(collInfo) {
+                colExistsAction(collInfo)
+            } else {
+                colDoesNotExistAction();
+            }
+        })
     }
 
-
+	// API
 
     return {
         init: init,

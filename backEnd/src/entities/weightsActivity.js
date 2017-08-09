@@ -22,14 +22,9 @@ var WeightsActivity = function () {
 		return reps;
     }
 	
-	function toObjLiteral() {
-        return {ISOStringDate: publicAPI.getDate().toISOString(), title: publicAPI.getTitle(), comments: publicAPI.getComments(), sets: getSets(), reps: getReps()};
-    }
-	
 	publicAPI.initWeightsActivity = initWeightsActivity;
     publicAPI.getSets = getSets;
 	publicAPI.getReps = getReps;
-	publicAPI.toObjLiteral = toObjLiteral;
 		
 	return publicAPI;
 	
