@@ -31,12 +31,13 @@ var ActivitiesInteractor = function() {
 	
     function addActivity(requestModel) {
         console.log('add');
-
-        activityRepository.addActivity(reqToActivity(requestModel), (activities)=> {
-            interactorOutput.presentActivities(activities.map(activityToRes))
+		
+		var activity = ActivityFactory().createActivity(requestModel);
+		
+        activityRepository.addActivity(activity, (activities)=> {
+            interactorOutput.presentActivities(activities.map(activity.toObjLiteral()))
         });
     };
-
 
     function removeActivity(requestModel) {
         console.log('remove');
@@ -44,30 +45,16 @@ var ActivitiesInteractor = function() {
 		var date = new Date(requestModel.ISOStringDate)
 		
         activityRepository.removeActivity(date, requestModel.title, (activities)=>{
-            interactorOutput.presentActivities(activities.map(activityToRes))
+            interactorOutput.presentActivities(activities.map(activity.toObjLiteral()))
         });
     };
 
     function listActivities() {
         console.log('get');
         activityRepository.getActivities((activities)=> {
-            interactorOutput.presentActivities(activities.map(activityToRes))
+            interactorOutput.presentActivities(activities.map(activity.toObjLiteral()))
         });
     };
-
-    // model transformation
-
-    function reqToActivity(req){
-        var activity = Activity();
-        var date = new Date(req.dateYear, req.dateMonth - 1, req.dateDayInMonth)
-        activity.init(date, req.title, req.comments);
-        return activity;
-    };
-
-    function activityToRes(activity) {
-        return activity.toObjLiteral();
-    }
-
 
     return {
         init: init,
@@ -77,4 +64,20 @@ var ActivitiesInteractor = function() {
         removeActivity: removeActivity,
         changeToWeek: changeToWeek
     }
+}
+
+function ActivityFactory(activityType, params) {
+	
+	function buildActivity() {
+		if(activityType == "Running" ||
+		activityType == "Cycling" ||
+		activityType == "Rowing" ||) {
+			// todo: create new aerobicactivity - create aerobic/anaerobic on front end
+		} else {
+			// todo: create new aerobicactivity - create aerobic/anaerobic on front end
+		}
+	}
+	
+	return {
+	}
 }

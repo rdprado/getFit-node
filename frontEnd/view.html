@@ -16,38 +16,34 @@
         <input v-model="dateYear" placeholder="Year">
 		<br>
 		<select v-model="selectedActivity">
-			<option v-for="activityType in activityTypes">{{activityType}}</option>
 			<option disabled value="">Please select one</option>
-			<option>Running</option>
-			<option>Cycling</option>
-			<option>Weights</option>
+			<option v-for="activityType in activityTypes">{{activityType}}</option>
 		</select>
         <br>
-        <input v-model="title" placeholder="Title your activity">
+		<input v-model="title" placeholder="Title your activity">
         <br>
-		<div id = "distanceInput" v-show="showActivity('Running')">
+		<div id = "aerobicFields" v-show="showActivity('Aerobic')">
 			<input v-model="distance"  placeholder="Distance">
 			<span>km</span>
 			<br>
 			<input v-model="duration" placeholder="Duration">
 			<span>min</span>
-		</div>
-		<div id = "distanceInput" v-show="showActivity('Cycling')">
-			<input v-model="distance"  placeholder="Distance">
-			<span>km</span>
 			<br>
-			<input v-model="duration" placeholder="Duration">
-			<span>min</span>
+			<button v-on:click="addActivity()">Add</button>
 		</div>
-		<div id = "distanceInput" v-show="showActivity('Weights')">
-			<input v-model="duration" placeholder="Duration">
-			<span>min</span>
-			
+		<div id = "anaerobicFields" v-show="showActivity('Anaerobic')">
+			<input v-model="sets" placeholder="Sets">
+			<span>sets</span>
+			<input v-model="reps" placeholder="Reps">
+			<span>reps</span>
+			<input v-model="weight" placeholder="Weight">
+			<span>weight</span>
+			<br>
+			<button v-on:click="addActivity()">Add</button>
 		</div>
 		<br>
         <textarea rows="4" cols="50" v-model="comments" placeholder="Comments"></textarea>
         <br>
-        <button v-on:click="addActivity">Add</button>
     </div>
     <br>
 

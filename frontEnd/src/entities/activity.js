@@ -21,8 +21,12 @@ var Activity = function () {
     };
 
     function toObjLiteral() {
-        return {ISOStringDate: getDate().toISOString(), title: getTitle(), comments: getComments()};
+        return {date: getDate(), title: getTitle(), comments: getComments()};
     }
+	
+	function serialized() {
+		return {type: "Activity", ISOStringDate: getDate().toISOString(), title: getTitle(), comments: getComments()};
+	}
 
     return {
         init: init,

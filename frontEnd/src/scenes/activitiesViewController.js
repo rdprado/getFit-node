@@ -11,19 +11,33 @@ var activitiesController = new Vue({
         dateYear: 1999,
         title: '',
         comments: '',
-        activities: [],
+        distance: '',
+		duration: '',
+		sets: 0,
+		reps: 0,
+		weight: 0,
         currentWeek: '',
         daysData: '',
-		comments: '',
 		selectedActivity: '',
-		activityTypes: [],
-		distance: '',
-		duration: '',
-		
+		activities: [],
+		activityTypes: []
     },
     methods: {
-		showActivity(activityName) {
-			return this.selectedActivity === activityName;
+		showActivity(activityType) {
+			
+			var show = false;
+			
+			if(activityType === "Aerobic" && ( 
+					this.selectedActivity === "Running" || 
+					this.selectedActivity === "Cycling" ||
+					this.selectedActivity === "Rowing")) {
+				show = true;
+			} else if( activityType === "Anaerobic" &&(
+				this.selectedActivity == "Weights")) {
+				show = true;
+			}
+			
+			return show;
 		},
         updateWeekUI: function(viewModel) {
             this.daysData = viewModel.daysData;
@@ -43,16 +57,8 @@ var activitiesController = new Vue({
 
             activitiesInteractor.removeActivity(requestModel);
         },
-
         addActivity: function() {
-            var requestModel = {
-                dateYear: this.dateYear,
-				dateMonth: this.dateMonth,
-				dateDayInMonth: this.dateDay,
-                title: this.title,
-                comments: this.comments
-            }
-
+			var requestModel = RequestBuilder().buildRequest(this.selectedActivity, this);
             activitiesInteractor.addActivity(requestModel);
         },
         previousWeek: function() {
@@ -117,5 +123,42 @@ var activitiesController = new Vue({
 		activitiesInteractor.listActivityTypes();
     }
 })
+
+
+function RequestBuilder(){
+	function buildRequest(activityType, params) {
+		
+		var requestModel = {};
+		
+		var date = new Date(params.dateYear, params.dateMonth - 1, params.dateDayInMonth);
+		
+		// TODO: isaerobic
+		if(activityType === "Running" || 
+		    activityType === "Cycling" ||
+		    activityType === "Rowing") {
+			requestModel = {
+				activityType: "Aerobic", // TODO get from enum, where?
+				date: params.dateYear,
+				title: params.title,
+				comments: params.comments
+			}
+        } else {
+			requestModel = {
+				activityType: "Anaerobic", // TODO get from enum, where?
+                date: params.dateYear,
+                title: params.title,
+                comments: params.comments,
+				sets: params.sets,
+				reps: params.reps
+            }
+		}
+		
+		 return requestModel;
+	}
+	
+	return  {
+		buildRequest: buildRequest
+	}
+}
 
 

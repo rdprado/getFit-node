@@ -4,10 +4,13 @@ var ActivityRepositoryMongoDB = function() {
 
     var database;
     const COLLECTION_NAME = 'activities';
-
+	
+	var activityTypes = {aerobic: ["Running", "Cycling", "Rowing"],
+						 anaerobic: ["Weights"]}
+	
     function init(db) {
         database = db;
-    };
+    }
 
     function addActivity(activity, done) {
         var doc = {date: activity.getDate(), title: activity.getTitle(), comments: activity.getComments()};
@@ -24,13 +27,11 @@ var ActivityRepositoryMongoDB = function() {
     }
 	
 	function fetchActivityTypes(done) {
-		var activityTypes = ["Running", "Cycling", "Weights", "Rowing"]
-		activityTypes.sort((a, b) => a.localeCompare(b));
 		done(activityTypes);
 	}
 
 	/////////////////////
-    // mongo helpers
+    // mongo common
 
 	// INSERTION
 	

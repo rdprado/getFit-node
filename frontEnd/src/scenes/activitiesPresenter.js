@@ -11,7 +11,7 @@ var ActivitiesPresenter = function() {
         var formattedWeek = formatWeekInterval(responseModel.weekBegin, responseModel.weekEnd);
 
         var activitiesWithSimplifiedDate = responseModel.activities.map((activity)=>{
-            return {date:dateToMMDDYYYY(new Date(activity.ISOStringDate)), title: activity.title, comments: activity.comments}
+            return {date:dateToMMDDYYYY(activity.date), title: activity.title, comments: activity.comments}
         });
 
         var activitiesBySimplifiedDate = _.groupBy(activitiesWithSimplifiedDate, 'date');
@@ -26,7 +26,7 @@ var ActivitiesPresenter = function() {
     }
 	
 	function presentActivityTypes(responseModel) {
-		viewModel = responseModel;
+		viewModel = responseModel.aerobic.concat(responseModel.anaerobic).sort((a,b) => a.localeCompare(b));
 		activitiesPresenterOutput.updateActivityTypes(viewModel);
 	}
 
