@@ -24,11 +24,17 @@ var ActivitiesPresenter = function() {
 
         activitiesPresenterOutput.updateWeekUI(viewModel);
     }
-	
-	function presentActivityTypes(responseModel) {
-		viewModel = responseModel.aerobic.concat(responseModel.anaerobic).sort((a,b) => a.localeCompare(b));
-		activitiesPresenterOutput.updateActivityTypes(viewModel);
-	}
+
+    function presentActivityNames(responseModel) {
+        var viewModel = [];
+
+        for(actType in responseModel) {
+            viewModel = viewModel.concat(responseModel[actType].names);
+        }
+
+        viewModel.sort((a,b) => a.localeCompare(b));
+        activitiesPresenterOutput.updateActivityNames(viewModel);
+    }
 
     function presentActivities(responseModel) {
         viewModel = responseModel;
@@ -77,7 +83,7 @@ var ActivitiesPresenter = function() {
 
     return {
         init: init,
-		presentActivityTypes: presentActivityTypes,
+        presentActivityNames: presentActivityNames,
         presentActivities: presentActivities,
         presentWeek: presentWeek
     }

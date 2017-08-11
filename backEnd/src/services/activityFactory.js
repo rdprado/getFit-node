@@ -1,7 +1,9 @@
+var AerobicActivity = require('../entities/aerobicActivity')
+var AnaerobicActivity = require('../entities/anaerobicActivity')
+
 function ActivityFactory() {
 
     function createActivity(activityType, params) {
-
         if(activityType === "Aerobic") {
             var activity = AerobicActivity();
             activity.initAerobicActivity(params.name,
@@ -30,3 +32,5 @@ function ActivityFactory() {
         createActivity: createActivity
     }
 }
+
+module.exports = ActivityFactory;

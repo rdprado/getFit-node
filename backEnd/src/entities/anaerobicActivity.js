@@ -1,3 +1,5 @@
+var Activity = require('./activity');
+
 var AnaerobicActivity = function () {
 
     var publicAPI = {};
@@ -7,8 +9,8 @@ var AnaerobicActivity = function () {
     var reps = 0;
     var weight = 0;
 
-    function initAnaerobicActivity(Name, Date_, Title, Comments, Duration, Sets, Reps, Weight) {
-        publicAPI.init(Name, Date_, Title, Comments, Duration);
+    function initAnaerobicActivity(Date_, Title, Comments, Duration, Sets, Reps, Weight) {
+        publicAPI.init(Date_, Title, Comments, Duration);
         sets = Sets;
         reps = Reps;
         weight = Weight;
@@ -45,4 +47,7 @@ var AnaerobicActivity = function () {
     publicAPI.toObjLiteral = toObjLiteral;
 
     return publicAPI;
+
 }
+
+module.exports = AnaerobicActivity;

@@ -1,42 +1,64 @@
-var Activity = require('../entities/activity');
+var ActivityFactory = require('../services/activityFactory');
 
 var ActivityRepositoryMongoDB = function() {
 
     var database;
     const COLLECTION_NAME = 'activities';
-	
-	var activityTypes = {aerobic: ["Running", "Cycling", "Rowing"],
-						 anaerobic: ["Weights"]}
-	
+
+    var activityNamesPerType = [ 
+        { 
+            activityType: "Aerobic",
+            names: ["Running", "Cycling", "Rowing"] 
+        },
+        { 
+            activityType: "Anaerobic",
+            names: ["Weights"]
+        },
+
+    ];
+
     function init(db) {
         database = db;
     }
 
-    function addActivity(activity, done) {
-        var doc = {date: activity.getDate(), title: activity.getTitle(), comments: activity.getComments()};
-		addDoc(doc, done);
+    function activityTypeForName(activityName) {
+        for(pair in activityNamesPerType) {
+            if(activityNamesPerType[pair].names.indexOf(activityName) >= 0) {
+                return activityNamesPerType[pair].activityType;
+            } 
+        }
+        return '';
     }
-	
-	function removeActivity(date, title, done) {
-		var filter = {date: date, title: title};
+
+    function addActivity(activity, done) {
+        var doc = activity.toObjLiteral();
+        addDoc(doc, done);
+    }
+
+    function removeActivity(date, title, done) {
+        var filter = {date: date, title: title};
         removeDoc(filter, done);
     }
-	
-    function fetchActivities(done) {
-        fetchDocs(done);
-    }
-	
-	function fetchActivityTypes(done) {
-		done(activityTypes);
-	}
 
-	/////////////////////
+    function fetchActivities(done) {
+        var mapCB = (mongoDoc) => {
+            return ActivityFactory().createActivity(activityTypeForName(mongoDoc.name), mongoDoc);
+        }
+
+        fetchDocs(done, mapCB);
+    }
+
+    function fetchActivityNames(done) {
+        done(activityNamesPerType);
+    }
+
+    /////////////////////
     // mongo common
 
-	// INSERTION
-	
-	function addDoc(doc, done) {
-		var collectionExistsAction = (collInfo)=> {
+    // INSERTION
+
+    function addDoc(doc, done) {
+        var collectionExistsAction = (collInfo)=> {
             insertInCollection(collInfo.name, doc, ()=> {
                 done()
             });
@@ -52,9 +74,9 @@ var ActivityRepositoryMongoDB = function() {
         }
 
         collectionExists(COLLECTION_NAME, collectionExistsAction, collectionDoesNotExistAction);
-	}
-	
-	function insertInCollection(collectionName, doc, done){
+    }
+
+    function insertInCollection(collectionName, doc, done){
         database.collection(collectionName, {strict:true}, function(err, col) {
             if(!err){
                 col.insertOne(doc, function (err, result) {
@@ -66,19 +88,19 @@ var ActivityRepositoryMongoDB = function() {
             }
         });
     }
-	
-	function createCollection(name, done) {
+
+    function createCollection(name, done) {
         database.createCollection(name).then(function(collection) {
             done(collection);
         }).catch(function(err){
             console.log("Error create collection: " + err);
         });
     }
-	
-	// DELETION
-	
-	function removeDoc(filter, done) {
-		database.collection(COLLECTION_NAME, {strict:true}, function(err, col) {
+
+    // DELETION
+
+    function removeDoc(filter, done) {
+        database.collection(COLLECTION_NAME, {strict:true}, function(err, col) {
             if(!err){
                 col.deleteOne(filter).then(function(result){
                     done();
@@ -88,14 +110,14 @@ var ActivityRepositoryMongoDB = function() {
                 });
             } 
         });
-	}
-	
-	// RETRIEVAL
-	
-	function fetchDocs(done) {
-		var collectionExistsAction = (collInfo)=> {
+    }
+
+    // RETRIEVAL
+
+    function fetchDocs(done, mapCB) {
+        var collectionExistsAction = (collInfo)=> {
             fetchDocsFromCollection(collInfo.name, (docs)=>{
-                done(docs.map(docToActivity));
+                done(docs.map(mapCB));
             });
         }
 
@@ -104,9 +126,9 @@ var ActivityRepositoryMongoDB = function() {
         }
 
         collectionExists(COLLECTION_NAME, collectionExistsAction, collectionDoesNotExistAction);
-	}
-	
-	function fetchDocsFromCollection(collectionName, done){
+    }
+
+    function fetchDocsFromCollection(collectionName, done){
         database.collection(collectionName, {strict:true}, function(err, col) {
             if(!err){
                 col.find({}).toArray().then(function(docs){
@@ -120,15 +142,10 @@ var ActivityRepositoryMongoDB = function() {
             }
         });
     }
-	
-	function docToActivity(mongoDoc){
-        var activity = Activity();
-        activity.init(mongoDoc.date, mongoDoc.title, mongoDoc.comments);
-        return activity;
-    }
-	
-	// HELPERS
-	
+
+
+    // HELPERS
+
     function collectionExists(collectionName, colExistsAction, colDoesNotExistAction) {
         database.listCollections({name: COLLECTION_NAME})
         .next(function(err, collInfo) {
@@ -140,12 +157,13 @@ var ActivityRepositoryMongoDB = function() {
         })
     }
 
-	// API
+    // API
 
     return {
         init: init,
+        activityTypeForName: activityTypeForName,
         addActivity: addActivity,
-		fetchActivityTypes: fetchActivityTypes,
+        fetchActivityNames: fetchActivityNames,
         fetchActivities: fetchActivities,
         removeActivity: removeActivity
     };

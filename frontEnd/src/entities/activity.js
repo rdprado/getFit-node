@@ -1,38 +1,46 @@
 var Activity = function () {
 
-    var datePerformed, activityTitle, activityComments;
+    var name, date, title, comments, duration;
 
-    function init(date, title, comments) {
-        datePerformed = date;
-        activityTitle = title;
-        activityComments = comments;
+    function init(Name, DatePerformed, Title, Comments, Duration) {
+        name = Name;
+        date = DatePerformed;
+        title = Title;
+        comments = Comments;
+        duration = Duration;
+    };
+
+    function getName() {
+        return name;
     };
 
     function getDate() {
-        return datePerformed;
+        return date;
     };
 
     function getTitle() {
-        return activityTitle;
+        return title;
     };
 
     function getComments() {
-        return activityComments;
+        return comments;
+    };
+
+    function getDuration() {
+        return duration;
     };
 
     function toObjLiteral() {
         return {date: getDate(), title: getTitle(), comments: getComments()};
     }
-	
-	function serialized() {
-		return {type: "Activity", ISOStringDate: getDate().toISOString(), title: getTitle(), comments: getComments()};
-	}
 
     return {
         init: init,
+        getName: getName,
         getDate: getDate,
         getTitle: getTitle,
         getComments: getComments,
+        getDuration: getDuration,
         toObjLiteral, toObjLiteral
     }
 }

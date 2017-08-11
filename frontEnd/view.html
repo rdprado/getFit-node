@@ -3,7 +3,10 @@
 <script src="./node_modules/lodash/lodash.js"></script>
 
 <script src="./src/entities/activity.js"></script>
+<script src="./src/entities/aerobicActivity.js"></script>
+<script src="./src/entities/anaerobicActivity.js"></script>
 <script src="./src/services/activityRepositoryAxios.js"></script>
+<script src="./src/services/activityFactory.js"></script>
 <script src="./src/scenes/activitiesInteractor.js"></script>
 <script src="./src/scenes/activitiesPresenter.js"></script>
 
@@ -14,34 +17,34 @@
         <input v-model="dateMonth" placeholder="Month">
         <input v-model="dateDay" placeholder="Day">
         <input v-model="dateYear" placeholder="Year">
-		<br>
-		<select v-model="selectedActivity">
-			<option disabled value="">Please select one</option>
-			<option v-for="activityType in activityTypes">{{activityType}}</option>
-		</select>
         <br>
-		<input v-model="title" placeholder="Title your activity">
+        <select v-model="selectedActivityName">
+            <option disabled value="">Please select one</option>
+            <option v-for="activityName in activityNames">{{activityName}}</option>
+        </select>
         <br>
-		<div id = "aerobicFields" v-show="showActivity('Aerobic')">
-			<input v-model="distance"  placeholder="Distance">
-			<span>km</span>
-			<br>
-			<input v-model="duration" placeholder="Duration">
-			<span>min</span>
-			<br>
-			<button v-on:click="addActivity()">Add</button>
-		</div>
-		<div id = "anaerobicFields" v-show="showActivity('Anaerobic')">
-			<input v-model="sets" placeholder="Sets">
-			<span>sets</span>
-			<input v-model="reps" placeholder="Reps">
-			<span>reps</span>
-			<input v-model="weight" placeholder="Weight">
-			<span>weight</span>
-			<br>
-			<button v-on:click="addActivity()">Add</button>
-		</div>
-		<br>
+        <input v-model="title" placeholder="Title your activity">
+        <br>
+        <div id = "aerobicFields" v-show="showActivity('Aerobic')">
+            <input v-model="distance"  placeholder="Distance">
+            <span>km</span>
+            <br>
+            <input v-model="duration" placeholder="Duration">
+            <span>min</span>
+            <br>
+            <button v-on:click="addActivity()">Add</button>
+        </div>
+        <div id = "anaerobicFields" v-show="showActivity('Anaerobic')">
+            <input v-model="sets" placeholder="Sets">
+            <span>sets</span>
+            <input v-model="reps" placeholder="Reps">
+            <span>reps</span>
+            <input v-model="weight" placeholder="Weight">
+            <span>weight</span>
+            <br>
+            <button v-on:click="addActivity()">Add</button>
+        </div>
+        <br>
         <textarea rows="4" cols="50" v-model="comments" placeholder="Comments"></textarea>
         <br>
     </div>
@@ -90,7 +93,7 @@
 
         <ul id="activities">
             <li v-for="activity in activities">
-                <p>Date: {{ activity.ISOStringDate}} | Name: {{ activity.title  }} | Comments: {{ activity.comments}}</p>
+                <p>Date: {{ activity.date}} | Name: {{ activity.title  }} | Comments: {{ activity.comments}}</p>
                 <button v-on:click="removeActivity(activity.ISOStringDate, activity.title)">X</button>
             </li>
         </ul>

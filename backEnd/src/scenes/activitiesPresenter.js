@@ -6,13 +6,13 @@ var ActivitiesPresenter = function ActivityPresenter() {
     function formatGetActivities(responseModel) {
         return JSON.stringify(responseModel.activities);
     }
-	
-	function formatActivityTypes(responseModel) {
-		return JSON.stringify(responseModel.activityTypes);
-	}
-	
+
+    function formatActivityNames(responseModel) {
+        return JSON.stringify(responseModel.activityNames);
+    }
+
     return {
-		formatActivityTypes: formatActivityTypes,
+        formatActivityNames: formatActivityNames,
         formatGetActivities: formatGetActivities
     }
 }

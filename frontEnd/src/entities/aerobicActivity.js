@@ -1,22 +1,33 @@
 var AerobicActivity = function () {
 
-	var publicAPI = {};
-	publicAPI.__proto__ = Activity();
+    var publicAPI = {};
+    publicAPI.__proto__ = Activity();
 
     var distance = 0;
 
-    function initAerobicActivity(Date_, Title, Comments, Distance) {
-		publicAPI.init(Date_, Title, Comments);
+    function initAerobicActivity(Name, Date_, Title, Comments, Duration, Distance) {
+        publicAPI.init(Name, Date_, Title, Comments, Duration);
         distance = Distance;
     };
 
     function getDistance() {
         return distance;
     };
-	
-	publicAPI.initAerobicActivity = initAerobicActivity;
+
+    function toObjLiteral() {
+        return {
+            name: publicAPI.getName(), 
+            date: publicAPI.getDate(), 
+            title: publicAPI.getTitle(), 
+            comments: publicAPI.getComments(),
+            duration: publicAPI.getDuration(), 
+            distance: getDistance()}
+    }
+
+    publicAPI.initAerobicActivity = initAerobicActivity;
     publicAPI.getDistance = getDistance;
-		
-	return publicAPI;
-	
+    publicAPI.toObjLiteral = toObjLiteral;
+
+    return publicAPI;
+
 }

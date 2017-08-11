@@ -10,55 +10,58 @@ var ActivitiesInteractor = function() {
 
     function changeToWeek(weekBegin, weekEnd){
 
-        activityRepository.getActivities((activities)=>{
+        // activityRepository.getActivities((activities)=>{
+        //
+        //     var responseModel = {
+        //         weekBegin: weekBegin,
+        //         weekEnd: weekEnd,
+        //         activities: activities.map(activityToRes) 
+        //     }
+        //
+        //     interactorOutput.presentWeek(responseModel);
+        // });
+    }
 
-            var responseModel = {
-                weekBegin: weekBegin,
-                weekEnd: weekEnd,
-                activities: activities.map(activityToRes) 
-            }
-
-            interactorOutput.presentWeek(responseModel);
+    function listActivityNames() {
+        console.log("list activity names")
+        var activityNames = activityRepository.getActivityNames((activityNames)=>{
+            interactorOutput.presentActivityNames(activityNames);
         });
     }
 
-	function listActivityTypes() {
-		console.log("list types")
-		var activityTypes = activityRepository.getActivityTypes((activityTypes)=>{
-			interactorOutput.presentActivityTypes(activityTypes);
-		});
-	}
-	
     function addActivity(requestModel) {
         console.log('add');
-		
-		var activity = ActivityFactory().createActivity(requestModel);
-		
+
+        var activity = ActivityFactory().createActivity(requestModel.activityType, requestModel);
+
         activityRepository.addActivity(activity, (activities)=> {
-            interactorOutput.presentActivities(activities.map(activity.toObjLiteral()))
+            interactorOutput.presentActivities(activities.map(activityToObjectLiteral))
         });
     };
 
     function removeActivity(requestModel) {
         console.log('remove');
 
-		var date = new Date(requestModel.ISOStringDate)
-		
+        var date = new Date(requestModel.ISOStringDate)
+
         activityRepository.removeActivity(date, requestModel.title, (activities)=>{
-            interactorOutput.presentActivities(activities.map(activity.toObjLiteral()))
+            interactorOutput.presentActivities(activities.map(activityToObjectLiteral))
         });
     };
 
     function listActivities() {
-        console.log('get');
         activityRepository.getActivities((activities)=> {
-            interactorOutput.presentActivities(activities.map(activity.toObjLiteral()))
+            interactorOutput.presentActivities(activities.map(activityToObjectLiteral))
         });
     };
 
+    function activityToObjectLiteral(activity) {
+        return activity.toObjLiteral()
+    }
+
     return {
         init: init,
-		listActivityTypes: listActivityTypes,
+        listActivityNames: listActivityNames,
         listActivities: listActivities,
         addActivity: addActivity,
         removeActivity: removeActivity,
@@ -66,18 +69,3 @@ var ActivitiesInteractor = function() {
     }
 }
 
-function ActivityFactory(activityType, params) {
-	
-	function buildActivity() {
-		if(activityType == "Running" ||
-		activityType == "Cycling" ||
-		activityType == "Rowing" ||) {
-			// todo: create new aerobicactivity - create aerobic/anaerobic on front end
-		} else {
-			// todo: create new aerobicactivity - create aerobic/anaerobic on front end
-		}
-	}
-	
-	return {
-	}
-}
