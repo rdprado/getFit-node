@@ -4,14 +4,18 @@ var ActivitiesUseCaseInteractor = function() {
     var activityRepository;
     var activitiesUseCaseInteractorOutput;
 
-    function init(activitiesRepository, useCaseInteractorOutput){
-        activityRepository = activitiesRepository;
-        activitiesUseCaseInteractorOutput = useCaseInteractorOutput;
+    function init(ActivityRepository, UseCaseInteractorOutput){
+        activityRepository = ActivityRepository;
+        activitiesUseCaseInteractorOutput = UseCaseInteractorOutput;
     };
 
     function addActivity(requestModel, done){
-        var activity = ActivityFactory().createActivity(activitiesRepository.activityTypeForName(requestModel.name), requestModel);
-        activityRepository.addActivity(activity, done);
+        try {
+            var activity = ActivityFactory().createActivity(activityRepository.activityTypeForName(requestModel.name), requestModel);
+            activityRepository.addActivity(activity, done);
+        } catch(err) {
+            console.log(err);
+        }
     };
 
     function getActivityNames(done) {

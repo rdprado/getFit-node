@@ -20,25 +20,13 @@ var activitiesController = new Vue({
         daysData: '',
         selectedActivityName: 'Running',
         activities: [],
-        activityNames: []
+        activityNames: [],
+        isAerobicSelected: true,
+
     },
     methods: {
-        showActivity(activityType) {
+        selectActivity: function() {
 
-            var show = false;
-
-            // TODO
-
-            if(activityType === "Aerobic" && 
-               (this.selectedActivityName === "Running" || 
-                this.selectedActivityName === "Cycling" ||
-                this.selectedActivityName === "Rowing")) {
-                    show = true;
-                } else if(activityType === "Anaerobic" && (this.selectedActivity == "Weights")) {
-                    show = true;
-                }
-
-            return show;
         },
         updateWeekUI: function(viewModel) {
             this.daysData = viewModel.daysData;
@@ -59,7 +47,7 @@ var activitiesController = new Vue({
             activitiesInteractor.removeActivity(requestModel);
         },
         addActivity: function() {
-            var requestModel = RequestBuilder().buildRequest(this.selectedActivity, this);
+            var requestModel = RequestBuilder().buildRequest(this.selectedActivityName, this);
             activitiesInteractor.addActivity(requestModel);
         },
         previousWeek: function() {

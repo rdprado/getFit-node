@@ -18,23 +18,22 @@
         <input v-model="dateDay" placeholder="Day">
         <input v-model="dateYear" placeholder="Year">
         <br>
-        <select v-model="selectedActivityName">
+        <select v-on:change="selectActivity()" v-model="selectedActivityName">
             <option disabled value="">Please select one</option>
             <option v-for="activityName in activityNames">{{activityName}}</option>
         </select>
         <br>
         <input v-model="title" placeholder="Title your activity">
         <br>
-        <div id = "aerobicFields" v-show="showActivity('Aerobic')">
+        <input v-model="duration" placeholder="Duration">
+        <span>min</span>
+        <br>
+        <div id = "aerobicFields">
             <input v-model="distance"  placeholder="Distance">
             <span>km</span>
             <br>
-            <input v-model="duration" placeholder="Duration">
-            <span>min</span>
-            <br>
-            <button v-on:click="addActivity()">Add</button>
         </div>
-        <div id = "anaerobicFields" v-show="showActivity('Anaerobic')">
+        <div id = "anaerobicFields">
             <input v-model="sets" placeholder="Sets">
             <span>sets</span>
             <input v-model="reps" placeholder="Reps">
@@ -42,8 +41,8 @@
             <input v-model="weight" placeholder="Weight">
             <span>weight</span>
             <br>
-            <button v-on:click="addActivity()">Add</button>
         </div>
+            <button v-on:click="addActivity()">Add</button>
         <br>
         <textarea rows="4" cols="50" v-model="comments" placeholder="Comments"></textarea>
         <br>

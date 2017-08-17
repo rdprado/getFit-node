@@ -13,6 +13,7 @@ function ActivityFactory() {
                           params.duration, 
                           params.distance);
 
+
             return activity; 
         } else {
             var activity = AnaerobicActivity();
