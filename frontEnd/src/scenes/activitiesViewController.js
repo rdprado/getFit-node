@@ -82,6 +82,7 @@ var activitiesController = new Vue({
     },
     mounted: function() {
         var activityRepository = ActivityRepositoryAxios();
+        activityRepository.init();
         var activitiesPresenter = ActivitiesPresenter();
         activitiesPresenter.init(this);
         activitiesInteractor = ActivitiesInteractor();
@@ -121,30 +122,16 @@ function RequestBuilder(){
 
         var date = new Date(params.dateYear, params.dateMonth - 1, params.dateDay);
 
-        // TODO: isaerobic
-        if(activityType === "Running" || 
-           activityType === "Cycling" ||
-           activityType === "Rowing") {
-               requestModel = {
-                   activityType: "Aerobic", // TODO get from enum, where?
-                   date: date,
-                   title: params.title,
-                   comments: params.comments,
-                   duration: params.duration,
-                   distance: params.distance
-               }
-           } else {
-               requestModel = {
-                   activityType: "Anaerobic", // TODO get from enum, where?
-                   date: date,
-                   title: params.title,
-                   comments: params.comments,
-                   duration: params.duration,
-                   sets: params.sets,
-                   reps: params.reps,
-                   weight: params.weight
-               }
-           }
+        requestModel = {
+            date: date,
+            name: params.selectedActivityName,
+            title: params.title,
+            comments: params.comments,
+            duration: params.duration,
+            sets: params.sets,
+            reps: params.reps,
+            weight: params.weight
+        }
 
            return requestModel;
     }

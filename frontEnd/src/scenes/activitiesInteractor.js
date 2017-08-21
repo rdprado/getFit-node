@@ -32,7 +32,7 @@ var ActivitiesInteractor = function() {
     function addActivity(requestModel) {
         console.log('add');
 
-        var activity = ActivityFactory().createActivity(requestModel.activityType, requestModel);
+        var activity = ActivityFactory().createActivity(activityRepository.activityTypeForName(requestModel.name), requestModel);
 
         activityRepository.addActivity(activity, (activities)=> {
             interactorOutput.presentActivities(activities.map(activityToObjectLiteral))

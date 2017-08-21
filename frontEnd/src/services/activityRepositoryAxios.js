@@ -5,7 +5,7 @@ var ActivityRepositoryAxios = function() {
     var activityNamesPerType = [];
 
     function init() {
-        activityNamesPerType = getActivityNamesFromServer();
+        getActivityNamesFromServer(()=>{});
     }
 
     function activityTypeForName(activityName) {
