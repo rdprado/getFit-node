@@ -14,27 +14,33 @@ var ActivitiesUseCaseInteractor = function() {
             var activity = ActivityFactory().createActivity(activityRepository.activityTypeForName(requestModel.name), requestModel);
             activityRepository.addActivity(activity, done);
         } catch(err) {
-            console.log(err);
+            console.log("Error|Backend|WorkoutsInteractor|Problem adding||" + err);
         }
     };
 
     function getActivityNames(done) {
 
-        var cb = function(activityNames) {
-            var responseModel = {activityNames: activityNames};
-            done(activitiesUseCaseInteractorOutput.formatActivityNames(responseModel))
+        try {
+            var cb = function(activityNames) {
+                var responseModel = {activityNames: activityNames};
+                done(activitiesUseCaseInteractorOutput.formatActivityNames(responseModel))
+            }
+            activityRepository.fetchActivityNames(cb);
+        } catch(err) {
+            console.log("Error|Backend|GetActivityNames|Problem retrieving activity names||" + err);
         }
-
-        activityRepository.fetchActivityNames(cb);
     }
 
     function getActivities(done) {
-        var cb = function(activities) {
-            var responseModel = {activities: activities.map(activityToRes)}; 
-            done(activitiesUseCaseInteractorOutput.formatGetActivities(responseModel));
-        };
-
-        activityRepository.fetchActivities(cb);
+        try {
+            var cb = function(activities) {
+                var responseModel = {activities: activities.map(activityToRes)}; 
+                done(activitiesUseCaseInteractorOutput.formatGetActivities(responseModel));
+            };
+            activityRepository.fetchActivities(cb);
+        } catch(err) {
+            console.log("Error|Backend|GetActivities|Problem retrieving activities||" + err);
+        }
     };
 
     function activityToRes(activity) {
@@ -42,7 +48,11 @@ var ActivitiesUseCaseInteractor = function() {
     }
 
     function removeActivity(requestModel, done){
-        activityRepository.removeActivity(new Date(requestModel.ISOStringDate), requestModel.title, done)
+        try {
+            activityRepository.removeActivity(new Date(requestModel.ISOStringDate), requestModel.title, done)
+        } catch(err) {
+            console.log("Error|Backend|RemoveActivity|Problem removing activity||" + err);
+        }
     }
 
     return {
