@@ -14,7 +14,7 @@ var ActivitiesUseCaseInteractor = function() {
             var activity = ActivityFactory().createActivity(activityRepository.activityTypeForName(requestModel.name), requestModel);
             activityRepository.addActivity(activity, done);
         } catch(err) {
-            console.log("Error|Backend|WorkoutsInteractor|Problem adding||" + err);
+            console.log("Backend ERROR, cannot add. Msg: " + err);
         }
     };
 
@@ -27,7 +27,7 @@ var ActivitiesUseCaseInteractor = function() {
             }
             activityRepository.fetchActivityNames(cb);
         } catch(err) {
-            console.log("Error|Backend|GetActivityNames|Problem retrieving activity names||" + err);
+            console.log("Backend ERROR, cannot cannot fetch activity names. Msg: " + err);
         }
     }
 
@@ -39,7 +39,7 @@ var ActivitiesUseCaseInteractor = function() {
             };
             activityRepository.fetchActivities(cb);
         } catch(err) {
-            console.log("Error|Backend|GetActivities|Problem retrieving activities||" + err);
+            console.log("Backend ERROR, cannot fetch activities. Msg: " + err);
         }
     };
 
@@ -51,7 +51,7 @@ var ActivitiesUseCaseInteractor = function() {
         try {
             activityRepository.removeActivity(new Date(requestModel.ISOStringDate), requestModel.title, done)
         } catch(err) {
-            console.log("Error|Backend|RemoveActivity|Problem removing activity||" + err);
+            console.log("Backend ERROR, cannot remove activity. Msg: " + err);
         }
     }
 
