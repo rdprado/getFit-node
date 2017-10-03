@@ -19,9 +19,9 @@ var ActivityRepositoryMongoDB = function() {
 
     // ];
 
-    function init(database) {
-         db = database;
-         mongoCommon = MongoCommon();
+    function init(DB, MongoCommon) {
+         db = DB;
+         mongoCommon = MongoCommon;
          mongoCommon.init(db, COLLECTION_NAME);
     }
 
@@ -34,9 +34,14 @@ var ActivityRepositoryMongoDB = function() {
     //     return '';
     // }
 
-    function addActivity(activity, done) {
-        mongoCommon.addDoc(activity, done);
-         //var doc = activity.toObjLiteral();
+
+    //function addActivity(activity){
+    //    return mongoCommon.addDoc(activity);
+    //}
+
+    function addActivity(activity) {
+        var doc = activity.toObjLiteral();
+        mongoCommon.addDoc(doc);
          //addDoc(doc, done);
     }
 
@@ -44,6 +49,10 @@ var ActivityRepositoryMongoDB = function() {
     //     var filter = {date: date, title: title};
     //     removeDoc(filter, done);
     // }
+
+    function fetchActivities() {
+        return mongoCommon.fetchDocs();
+    }
 
     // function fetchActivities(done) {
     //     var mapCB = (mongoDoc) => {
@@ -64,9 +73,10 @@ var ActivityRepositoryMongoDB = function() {
     return {
          init: init,
     //     activityTypeForName: activityTypeForName,
+         //addActivity: addActivity,
          addActivity: addActivity,
     //     fetchActivityNames: fetchActivityNames,
-    //     fetchActivities: fetchActivities,
+        fetchActivities: fetchActivities,
     //     removeActivity: removeActivity
     };
 }

@@ -1,18 +1,27 @@
 var Activity = function (date, title, comments) {
 
-    var name, date, title, comments, duration;
+    // duration in minutes
 
-    function init(Name, DatePerformed, Title, Comments, Duration) {
-        name = Name;
+    //var type, date, title, comments, duration;
+    var date, title, comments;
+
+    // function init(Type, DatePerformed, Title, Comments, Duration) {
+    //     type = Type;
+    //     date = DatePerformed;
+    //     title = Title;
+    //     comments = Comments;
+    //     duration = Duration;
+    // };
+
+    function init(DatePerformed, Title, Comments) {
         date = DatePerformed;
         title = Title;
         comments = Comments;
-        duration = Duration;
     };
 
-    function getName() {
-        return name;
-    };
+    // function getType() {
+    //     return type;
+    // };
 
     function getDate() {
         return date;
@@ -26,17 +35,26 @@ var Activity = function (date, title, comments) {
         return comments;
     };
 
-    function getDuration() {
-        return duration;
-    };
+    function toObjLiteral() {
+        return {
+            date: getDate(), 
+            title: getTitle(), 
+            comments: getComments()
+        }
+    }
+
+    // function getDuration() {
+    //     return duration;
+    // };
 
     return {
         init: init,
-        getName: getName,
+        //getType: getType,
         getDate: getDate,
         getTitle: getTitle,
         getComments: getComments,
-        getDuration: getDuration
+        toObjLiteral: toObjLiteral
+        //getDuration: getDuration
     }
 }
 

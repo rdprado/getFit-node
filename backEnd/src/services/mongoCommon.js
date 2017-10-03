@@ -1,9 +1,6 @@
-
-// var mongo = require('mongodb');
-// var MongoClient = require('mongodb').MongoClient
-
 /////////////////////
 // mongo common
+"use strict";
 
 // INSERTION
 
@@ -12,146 +9,122 @@ module.exports = function MongoCommon() {
     var db;
     var collectionName;
 
-    // function connect(url, done) {
-    //         MongoClient.connect(url, function(err, database) {
-    //             if (err) {
-    //                 return done(err);
-    //             }
-
-    //             db = database;
-    //             console.log("DB CONNECTED");
-
-    //             done();
-    //         });
-    // }
-
-    // function getDB(){
-    //     return db;
-    // }
-
-
-    // function test() {
-    //     console.log("test OK");
-    // };
-
     function init(database, collName) {
         db = database;
         collectionName = collName;
     }
 
-    // return {
-    //     connect: connect,
-    //     getDB: getDB,
-    //     test: test,
-    //     init: init
-    // };
+    function addDoc(doc) {
+        var p = new Promise(function(resolve, reject) {
 
-
-    function addDoc(doc, done) {
-        //  var collectionExistsAction = (collInfo)=> {
-        //      insertInCollection(collectionName, doc, ()=> {
-        //          done()
-        //      });
-        //  }
-
-        var collectionDoesNotExistAction = ()=> {
-
-            createCollection(collectionName, (collection)=> {
-                collection.insertOne(doc, function (err, result) {
-                    done();
-                    //console.log('created and inserted: ' + result.insertedCount);
+            var colExists = (collInfo)=>{
+                db.collection(collInfo.name, {strict:true}, function(error, collection) {
+                    if(!error){
+                        collection.insertOne(doc).then(function(r){
+                            resolve();  
+                        }, function(err){
+                            reject(err);
+                        })
+                    } else {
+                        reject(error);
+                    }
                 });
-            })
-        }
-        collectionExists(collectionName, ()=>{}, collectionDoesNotExistAction);
-    }
-
-    function insertInCollection(collectionName, doc, done){
-        db.collection(collectionName, {strict:true}, function(err, col) {
-            if(!err){
-                col.insertOne(doc, function (err, result) {
-                    done();
-                    console.log('inserted: ' + result.insertedCount + " in " + collectionName);
-                });
-            } else {
-                console.log("err inserting " + doc + " in " + collectionName);
             }
-        });
-    }
+            var colDoesNotExist = ()=>{
+                db.createCollection(collectionName).then(function(collection){
+                    collection.insertOne(doc).then(function(r){
+                         resolve();  
+                    }, function(err){
+                         reject(err);
+                    })  
+                }, function(err){
+                    reject(err);
+                });
+            };
 
-    function createCollection(name, done) {
+            doActionDependingIfCollectionExists(colExists, colDoesNotExist);
+        })
 
-        db.createCollection(name).then(function(collection) {
-            done(collection);
-        }).catch(function(err){
-            console.log("Error create collection: " + err);
-        });
+        return p;
     }
 
     // // DELETION
 
-    // function removeDoc(filter, done) {
-    //     database.collection(COLLECTION_NAME, {strict:true}, function(err, col) {
-    //         if(!err){
-    //             col.deleteOne(filter).then(function(result){
-    //                 done();
-    //                 console.log('removed: ' + result.deletedCount);
-    //             }).catch(function(err){
-    //                 console.log(err);
-    //             });
-    //         } 
-    //     });
-    // }
+    function removeDoc(filter) {
+        var p = new Promise(function(resolve, reject){
+            var colExists = (collInfo)=>{
+                db.collection(collInfo.name, {strict:true}, function(error, collection) {
+                    if(!error){
+                        collection.deleteOne(filter).then(function(r){
+                            resolve();  
+                        }, function(err){
+                            reject(err);
+                        })
+                    } else {
+                        reject(error);
+                    }
+                });
+            }
+            var colDoesNotExist = ()=>{
+                resolve();
+            };
+    
+            doActionDependingIfCollectionExists(colExists, colDoesNotExist);
+        });
+
+        return p;
+    }
 
     // // RETRIEVAL
 
-    // function fetchDocs(done, mapCB) {
-    //     var collectionExistsAction = (collInfo)=> {
-    //         fetchDocsFromCollection(collInfo.name, (docs)=>{
-    //             done(docs.map(mapCB));
-    //         });
-    //     }
+     function fetchDocs() {
+         var p = new Promise(function(resolve, reject)
+         {
+            var colExists = (collInfo)=>{
+                db.collection(collectionName, {strict:true}, function(error, collection) {
+                    if(!error){
+                        collection.find({}).toArray().then(function(docs){
+                            resolve(docs);  
+                        }, function(err){
+                            reject(err);
+                        })
+                    } else {
+                        reject(error);
+                    }
+                });
+            }
+            var colDoesNotExist = ()=>{
+                resolve([]);
+            };
 
-    //     var collectionDoesNotExistAction = ()=> {
-    //         done([]);
-    //     }
+            doActionDependingIfCollectionExists(colExists, colDoesNotExist);
 
-    //     collectionExists(COLLECTION_NAME, collectionExistsAction, collectionDoesNotExistAction);
-    // }
+         })
 
-    // function fetchDocsFromCollection(collectionName, done){
-    //     database.collection(collectionName, {strict:true}, function(err, col) {
-    //         if(!err){
-    //             col.find({}).toArray().then(function(docs){
-    //                 done(docs);
-    //             }).catch(function(err){
-    //                 throw new Error("Workouts Repository Error | Cannote Fetch | Cannot find documents in collection with name" + collectionName + ". >> " + err);
-    //             });
-    //         } else {
-    //             throw new Error("Workouts Repository Error | Cannot Fetch | Cannot fetch collection with name " + collectionName + ". >> " + err);
-    //             done([]);
-    //         }
-    //     });
-    // }
+         return p;
 
 
+     }
     // HELPERS
 
-    function collectionExists(collectionName, colExistsAction, colDoesNotExistAction) {
-       db.listCollections({name: collectionName})
-       .next(function(err, collInfo) {
-           if(collInfo) {
-               colExistsAction(collInfo)
-           } else {
-               colDoesNotExistAction();
-           }
-       })
-    }
+
+    function doActionDependingIfCollectionExists(colExistsAction, colDoesNotExistAction) {
+        db.listCollections({name: collectionName})
+        .next(function(err, collInfo) {
+            if(collInfo) {
+                colExistsAction(collInfo)
+            } else {
+                colDoesNotExistAction();
+            }
+        })
+     }
 
     // API
 
     return {
         init: init,
-        addDoc: addDoc
+        addDoc: addDoc,
+        fetchDocs: fetchDocs,
+        removeDoc: removeDoc
     };
 }
