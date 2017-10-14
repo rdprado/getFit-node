@@ -40,18 +40,48 @@ var ActivityRepositoryMongoDB = function() {
     //}
 
     function addActivity(activity) {
-        var doc = activity.toObjLiteral();
-        mongoCommon.addDoc(doc);
+        var p = new Promise(function(resolve, reject) {
+            try {
+                if(validateActivity(activity)) {
+                    var doc = activity.toObjLiteral();
+                    mongoCommon.addDoc(doc);
+                    resolve();    
+                } else {
+                    reject();
+                }
+            } catch(err) {
+                //console.log(err);
+                reject(err);
+            }
+        })
+
+        return p;
+        
+        
          //addDoc(doc, done);
     }
 
-    // function removeActivity(date, title, done) {
-    //     var filter = {date: date, title: title};
-    //     removeDoc(filter, done);
-    // }
+    function validateActivity(activity) {
+        if(activity.getTitle() == ""){
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function removeActivity(date, title) {
+         var filter = {date: date, title: title};
+         mongoCommon.removeDoc(filter);
+    }
 
     function fetchActivities() {
-        return mongoCommon.fetchDocs();
+        mongoCommon.fetchDocs();
+    }
+
+    function updateActivity(activity) {
+        var filter = {date: activity.getDate(), title: activity.getTitle()};
+        var paramsToUpdate = {done: activity.getIsDone()}
+        mongoCommon.updateActivity(filter, paramsToUpdate);
     }
 
     // function fetchActivities(done) {
@@ -76,8 +106,9 @@ var ActivityRepositoryMongoDB = function() {
          //addActivity: addActivity,
          addActivity: addActivity,
     //     fetchActivityNames: fetchActivityNames,
-        fetchActivities: fetchActivities,
-    //     removeActivity: removeActivity
+         fetchActivities: fetchActivities,
+         removeActivity: removeActivity,
+         updateActivity: updateActivity
     };
 }
 

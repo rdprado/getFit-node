@@ -14,6 +14,48 @@ module.exports = function MongoCommon() {
         collectionName = collName;
     }
 
+
+    // function updateDoc(filter, paramsToUpdate) {
+    //     var p = new Promise(function(resolve,reject){
+    //         var colExists = (collInfo)=>{
+    //             db.collection(collInfo.name, function (error, collection){
+    //                 if(!error){
+    //                     collection.updateOne(filter, {$set:paramsToUpdate}).then(function(r){
+    //                         resolve();
+    //                     })
+    //                 } else {
+    //                     reject(error);
+    //                 }
+    //             }
+    //         )}
+    //     })
+    // }
+
+    function updateDoc(filter, paramsToUpdate){
+        var p = new Promise(function(resolve, reject){
+            var colExists = (collInfo)=>{
+                db.collection(collInfo.name, function (error, collection){
+                    if(!error){
+                        collection.updateOne(filter, {$set:paramsToUpdate}).then(function(r){
+                            resolve();
+                        })
+                    } else {
+                        reject(error);
+                    }
+                }
+            )}
+
+            var colDoesNotExist = ()=>{
+                resolve();
+            };
+
+            doActionDependingIfCollectionExists(colExists, colDoesNotExist);
+
+        });
+
+        return p;
+    }
+
     function addDoc(doc) {
         var p = new Promise(function(resolve, reject) {
 
@@ -125,6 +167,7 @@ module.exports = function MongoCommon() {
         init: init,
         addDoc: addDoc,
         fetchDocs: fetchDocs,
-        removeDoc: removeDoc
+        removeDoc: removeDoc,
+        updateDoc: updateDoc
     };
 }

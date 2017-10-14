@@ -143,7 +143,7 @@ describe('MongoCommon', function(){
     });
 
     describe('#testDBRemoveDocNoCollection', function() {
-        it('should return 2 docs', function(done) {
+        it('should do nothing and give no errors', function(done) {
             mongoCommon.removeDoc({}).then(function(){
                 done()
             })
@@ -197,6 +197,42 @@ describe('MongoCommon', function(){
             });  
         });
     });
+
+
+    describe('#testDBUpdateDocNoCollection', function(){
+        it('should have updated doc', function(done){
+            mongoCommon.updateDoc({}, {}).then(function(){
+                done();
+            });  
+        })
+    })
+
+    describe('#testDBUpdateNonExistentDoc', function(){
+        it('should do nothing and no errors', function(done){
+            mongoCommon.addDoc({test2:"testDoc2"}).then(function(){
+                mongoCommon.updateDoc({test2:"testDoc3"}, {a:2}).then(function(){
+                    mongoCommon.fetchDocs().then(function(docs){
+                        assert.equal(docs.length, 1);
+                        done();
+                    })
+                });
+            })
+        })
+    })
+
+    describe('#testDBUpdateExistentDoc', function(){
+        it('should have updated doc', function(done){
+            mongoCommon.addDoc({test2:"testDoc2"}).then(function(){
+                mongoCommon.updateDoc({test2:"testDoc2"}, {a:2}).then(function(){
+                    mongoCommon.fetchDocs().then(function(docs){
+                        assert.equal(docs.length, 1);
+                        assert.equal(2, docs[0].a);
+                        done();
+                    })
+                });
+            })
+        })
+    })
 })
 
 
