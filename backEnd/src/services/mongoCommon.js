@@ -17,70 +17,96 @@ module.exports = function MongoCommon() {
     function updateDoc(filter, paramsToUpdate){
         var p = new Promise(function(resolve, reject){
 
-            if(!hasNull(paramsToUpdate))
-            {
-                var colExists = (collInfo)=>{
-                    db.collection(collInfo.name, function (error, collection){
-                        if(!error){
-                            collection.updateOne(filter, {$set:paramsToUpdate}).then(function(r){
-                                resolve();
-                            }).catch(function(err){
-                                reject(err);
-                            })
-                        } else {
-                            reject(error);
-                        }
-                    }
-                )}
+            db.collection(collectionName, function (error, collection){
+                if(!error){
+                    collection.updateOne(filter, {$set:paramsToUpdate}).then(function(r){
+                        resolve();
+                    }).catch(function(err){
+                        reject(err);
+                    })
+                } else {
+                    reject(error);
+                }
+            })
 
-                var colDoesNotExist = ()=>{
-                    resolve();
-                };
 
-                doActionDependingIfCollectionExists(colExists, colDoesNotExist);
-            } else {
-                reject("Can't update doc to null parameter");
-            }
+
+            // if(!hasNull(paramsToUpdate))
+            // {
+            //     var colExists = (collInfo)=>{
+            //         db.collection(collInfo.name, function (error, collection){
+            //             if(!error){
+            //                 collection.updateOne(filter, {$set:paramsToUpdate}).then(function(r){
+            //                     resolve();
+            //                 }).catch(function(err){
+            //                     reject(err);
+            //                 })
+            //             } else {
+            //                 reject(error);
+            //             }
+            //         }
+            //     )}
+
+            //     var colDoesNotExist = ()=>{
+            //         resolve();
+            //     };
+
+            //     doActionDependingIfCollectionExists(colExists, colDoesNotExist);
+            // } else {
+            //     reject("Can't update doc to null parameter");
+            // }
 
         });
 
         return p;
     }
 
-
-
     function addDoc(doc) {
         var p = new Promise(function(resolve, reject) {
-            if(!hasNull(doc)){
-                var colExists = (collInfo)=>{
-                    db.collection(collInfo.name, {strict:true}, function(error, collection) {
-                        if(!error){
-                            collection.insertOne(doc).then(function(r){
-                                resolve();  
-                            }).catch(function(err){
-                                reject(err);
-                            })
-                        } else {
-                            reject(error);
-                        }
-                    });
-                }
-                var colDoesNotExist = ()=>{
-                    db.createCollection(collectionName).then(function(collection){
-                        collection.insertOne(doc).then(function(r){
-                             resolve();  
-                        }).catch(function(err){
-                            reject(err);
-                        })  
-                    }, function(err){
+
+            db.collection(collectionName, {strict:true}, function(error, collection) {
+                if(!error){
+                    collection.insertOne(doc).then(function(r){
+                        resolve();  
+                    }).catch(function(err){
                         reject(err);
-                    });
-                };
+                    })
+                } else {
+                    reject(error);
+                }
+            });
+
+
+            // if(!hasNull(doc)){
+            //     var colExists = (collInfo)=>{
+            //         db.collection(collInfo.name, {strict:true}, function(error, collection) {
+            //             if(!error){
+            //                 collection.insertOne(doc).then(function(r){
+            //                     resolve();  
+            //                 }).catch(function(err){
+            //                     reject(err);
+            //                 })
+            //             } else {
+            //                 reject(error);
+            //             }
+            //         });
+            //     }
+            //     var colDoesNotExist = ()=>{
+            //         db.createCollection(collectionName).then(function(collection){
+            //             collection.insertOne(doc).then(function(r){
+            //                  resolve();  
+            //             }).catch(function(err){
+            //                 reject(err);
+            //             })  
+            //         }, function(err){
+            //             reject(err);
+            //         });
+            //     };
     
-                doActionDependingIfCollectionExists(colExists, colDoesNotExist);
-            } else {
-                reject("Can't add doc with null parameter");
-            }
+            //     doActionDependingIfCollectionExists(colExists, colDoesNotExist);
+            // } else {
+            //     reject("Can't add doc with null parameter");
+            // }
         })
 
         return p;
@@ -91,41 +117,68 @@ module.exports = function MongoCommon() {
     function removeDoc(filter) {
         var p = new Promise(function(resolve, reject){
 
-
             var count = 0; 
             
-                    for (var key in filter) {
-                        count++;
-                        if(filter[key] == null) {
-                            reject("Can't remove doc with null parameter");
-                            return;
-                        }
-                   }
-            
-                   if(count == 0) {
-                        reject("Can't remove doc with empty filter");
-                        return;
-                   }
-
-
-            var colExists = (collInfo)=>{
-                db.collection(collInfo.name, {strict:true}, function(error, collection) {
-                    if(!error){
-                        collection.deleteOne(filter).then(function(r){
-                            resolve();  
-                        }).catch(function(err){
-                            reject(err);
-                        })
-                    } else {
-                        reject(error);
-                    }
-                });
+            for (var key in filter) {
+                count++;
+                if(filter[key] == null) {
+                    reject("Can't remove doc with null parameter");
+                    return;
+                }
             }
-            var colDoesNotExist = ()=>{
-                resolve();
-            };
     
-            doActionDependingIfCollectionExists(colExists, colDoesNotExist);
+            if(count == 0) {
+                reject("Can't remove doc with empty filter");
+                return;
+            }
+
+
+            db.collection(collectionName, {strict:true}, function(error, collection) {
+                if(!error){
+                    collection.deleteOne(filter).then(function(r){
+                        resolve();  
+                    }).catch(function(err){
+                        reject(err);
+                    })
+                } else {
+                    reject(error);
+                }
+            });
+
+            // var count = 0; 
+            
+            //         for (var key in filter) {
+            //             count++;
+            //             if(filter[key] == null) {
+            //                 reject("Can't remove doc with null parameter");
+            //                 return;
+            //             }
+            //        }
+            
+            //        if(count == 0) {
+            //             reject("Can't remove doc with empty filter");
+            //             return;
+            //        }
+
+
+            // var colExists = (collInfo)=>{
+            //     db.collection(collInfo.name, {strict:true}, function(error, collection) {
+            //         if(!error){
+            //             collection.deleteOne(filter).then(function(r){
+            //                 resolve();  
+            //             }).catch(function(err){
+            //                 reject(err);
+            //             })
+            //         } else {
+            //             reject(error);
+            //         }
+            //     });
+            // }
+            // var colDoesNotExist = ()=>{
+            //     resolve();
+            // };
+    
+            // doActionDependingIfCollectionExists(colExists, colDoesNotExist);
         });
 
         return p;
@@ -136,24 +189,37 @@ module.exports = function MongoCommon() {
      function fetchDocs() {
          var p = new Promise(function(resolve, reject)
          {
-            var colExists = (collInfo)=>{
-                db.collection(collectionName, {strict:true}, function(error, collection) {
-                    if(!error){
-                        collection.find({}).toArray().then(function(docs){
-                            resolve(docs);  
-                        }).catch(function(err){
-                            reject(err);
-                        })
-                    } else {
-                        reject(error);
-                    }
-                });
-            }
-            var colDoesNotExist = ()=>{
-                resolve([]);
-            };
 
-            doActionDependingIfCollectionExists(colExists, colDoesNotExist);
+            db.collection(collectionName, {strict:true}, function(error, collection) {
+                if(!error){
+                    collection.find({}).toArray().then(function(docs){
+                        resolve(docs);  
+                    }).catch(function(err){
+                        reject(err);
+                    })
+                } else {
+                    reject(error);
+                }
+            });
+
+            // var colExists = (collInfo)=>{
+            //     db.collection(collectionName, {strict:true}, function(error, collection) {
+            //         if(!error){
+            //             collection.find({}).toArray().then(function(docs){
+            //                 resolve(docs);  
+            //             }).catch(function(err){
+            //                 reject(err);
+            //             })
+            //         } else {
+            //             reject(error);
+            //         }
+            //     });
+            // }
+            // var colDoesNotExist = ()=>{
+            //     resolve([]);
+            // };
+
+            // doActionDependingIfCollectionExists(colExists, colDoesNotExist);
 
          })
 
@@ -163,25 +229,25 @@ module.exports = function MongoCommon() {
      }
     // HELPERS
 
-    function hasNull(obj){
-        for (var key in obj) {
-            if(obj[key] == null) {
-                return true;
-            }
-        }
-        return false;
-    }
+    // function hasNull(obj){
+    //     for (var key in obj) {
+    //         if(obj[key] == null) {
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
 
-    function doActionDependingIfCollectionExists(colExistsAction, colDoesNotExistAction) {
-        db.listCollections({name: collectionName})
-        .next(function(err, collInfo) {
-            if(collInfo) {
-                colExistsAction(collInfo)
-            } else {
-                colDoesNotExistAction();
-            }
-        })
-     }
+    // function doActionDependingIfCollectionExists(colExistsAction, colDoesNotExistAction) {
+    //     db.listCollections({name: collectionName})
+    //     .next(function(err, collInfo) {
+    //         if(collInfo) {
+    //             colExistsAction(collInfo)
+    //         } else {
+    //             colDoesNotExistAction();
+    //         }
+    //     })
+    //  }
 
     // API
 
