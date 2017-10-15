@@ -1,4 +1,4 @@
-var Activity = function (date, title, instructions) {
+var Activity = function () {
 
     // duration in minutes
 

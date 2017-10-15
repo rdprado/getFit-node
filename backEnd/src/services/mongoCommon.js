@@ -14,77 +14,73 @@ module.exports = function MongoCommon() {
         collectionName = collName;
     }
 
-
-    // function updateDoc(filter, paramsToUpdate) {
-    //     var p = new Promise(function(resolve,reject){
-    //         var colExists = (collInfo)=>{
-    //             db.collection(collInfo.name, function (error, collection){
-    //                 if(!error){
-    //                     collection.updateOne(filter, {$set:paramsToUpdate}).then(function(r){
-    //                         resolve();
-    //                     })
-    //                 } else {
-    //                     reject(error);
-    //                 }
-    //             }
-    //         )}
-    //     })
-    // }
-
     function updateDoc(filter, paramsToUpdate){
         var p = new Promise(function(resolve, reject){
-            var colExists = (collInfo)=>{
-                db.collection(collInfo.name, function (error, collection){
-                    if(!error){
-                        collection.updateOne(filter, {$set:paramsToUpdate}).then(function(r){
-                            resolve();
-                        })
-                    } else {
-                        reject(error);
+
+            if(!hasNull(paramsToUpdate))
+            {
+                var colExists = (collInfo)=>{
+                    db.collection(collInfo.name, function (error, collection){
+                        if(!error){
+                            collection.updateOne(filter, {$set:paramsToUpdate}).then(function(r){
+                                resolve();
+                            }).catch(function(err){
+                                reject(err);
+                            })
+                        } else {
+                            reject(error);
+                        }
                     }
-                }
-            )}
+                )}
 
-            var colDoesNotExist = ()=>{
-                resolve();
-            };
+                var colDoesNotExist = ()=>{
+                    resolve();
+                };
 
-            doActionDependingIfCollectionExists(colExists, colDoesNotExist);
+                doActionDependingIfCollectionExists(colExists, colDoesNotExist);
+            } else {
+                reject("Can't update doc to null parameter");
+            }
 
         });
 
         return p;
     }
 
+
+
     function addDoc(doc) {
         var p = new Promise(function(resolve, reject) {
-
-            var colExists = (collInfo)=>{
-                db.collection(collInfo.name, {strict:true}, function(error, collection) {
-                    if(!error){
+            if(!hasNull(doc)){
+                var colExists = (collInfo)=>{
+                    db.collection(collInfo.name, {strict:true}, function(error, collection) {
+                        if(!error){
+                            collection.insertOne(doc).then(function(r){
+                                resolve();  
+                            }).catch(function(err){
+                                reject(err);
+                            })
+                        } else {
+                            reject(error);
+                        }
+                    });
+                }
+                var colDoesNotExist = ()=>{
+                    db.createCollection(collectionName).then(function(collection){
                         collection.insertOne(doc).then(function(r){
-                            resolve();  
-                        }, function(err){
+                             resolve();  
+                        }).catch(function(err){
                             reject(err);
-                        })
-                    } else {
-                        reject(error);
-                    }
-                });
-            }
-            var colDoesNotExist = ()=>{
-                db.createCollection(collectionName).then(function(collection){
-                    collection.insertOne(doc).then(function(r){
-                         resolve();  
+                        })  
                     }, function(err){
-                         reject(err);
-                    })  
-                }, function(err){
-                    reject(err);
-                });
-            };
-
-            doActionDependingIfCollectionExists(colExists, colDoesNotExist);
+                        reject(err);
+                    });
+                };
+    
+                doActionDependingIfCollectionExists(colExists, colDoesNotExist);
+            } else {
+                reject("Can't add doc with null parameter");
+            }
         })
 
         return p;
@@ -94,12 +90,30 @@ module.exports = function MongoCommon() {
 
     function removeDoc(filter) {
         var p = new Promise(function(resolve, reject){
+
+
+            var count = 0; 
+            
+                    for (var key in filter) {
+                        count++;
+                        if(filter[key] == null) {
+                            reject("Can't remove doc with null parameter");
+                            return;
+                        }
+                   }
+            
+                   if(count == 0) {
+                        reject("Can't remove doc with empty filter");
+                        return;
+                   }
+
+
             var colExists = (collInfo)=>{
                 db.collection(collInfo.name, {strict:true}, function(error, collection) {
                     if(!error){
                         collection.deleteOne(filter).then(function(r){
                             resolve();  
-                        }, function(err){
+                        }).catch(function(err){
                             reject(err);
                         })
                     } else {
@@ -127,7 +141,7 @@ module.exports = function MongoCommon() {
                     if(!error){
                         collection.find({}).toArray().then(function(docs){
                             resolve(docs);  
-                        }, function(err){
+                        }).catch(function(err){
                             reject(err);
                         })
                     } else {
@@ -149,6 +163,14 @@ module.exports = function MongoCommon() {
      }
     // HELPERS
 
+    function hasNull(obj){
+        for (var key in obj) {
+            if(obj[key] == null) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     function doActionDependingIfCollectionExists(colExistsAction, colDoesNotExistAction) {
         db.listCollections({name: collectionName})

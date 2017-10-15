@@ -1,5 +1,7 @@
 var ActivityFactory = require('../services/activityFactory');
 var MongoCommon = require('./mongoCommon');
+var ActivityValidator = require('../services/activityValidator')
+
 
 var ActivityRepositoryMongoDB = function() {
 
@@ -42,36 +44,42 @@ var ActivityRepositoryMongoDB = function() {
     function addActivity(activity) {
         var p = new Promise(function(resolve, reject) {
             try {
-                if(validateActivity(activity)) {
+                var activityValidator = ActivityValidator();
+                if(activityValidator.isValidActivity(activity)) {
                     var doc = activity.toObjLiteral();
                     mongoCommon.addDoc(doc);
                     resolve();    
                 } else {
-                    reject();
+                    reject("Can't add activity with invalid parameters");
                 }
             } catch(err) {
-                //console.log(err);
                 reject(err);
             }
         })
 
         return p;
-        
-        
-         //addDoc(doc, done);
     }
 
-    function validateActivity(activity) {
-        if(activity.getTitle() == ""){
-            return false;
-        } else {
-            return true;
-        }
-    }
 
     function removeActivity(date, title) {
-         var filter = {date: date, title: title};
-         mongoCommon.removeDoc(filter);
+
+        var p = new Promise(function(resolve, reject){
+            try{
+
+                var activityValidator = ActivityValidator();
+                if(activityValidator.isValidDate(date) && activityValidator.isValidTitle(title)) {
+                    var filter = {date: date, title: title};
+                    mongoCommon.removeDoc(filter);
+                    resolve();
+                } else {
+                    reject("Can't remove activity with invalid parameters");
+                }
+            } catch(err) {
+                reject(err);
+            }
+        });
+
+        return p;
     }
 
     function fetchActivities() {
