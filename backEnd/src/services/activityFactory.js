@@ -1,6 +1,8 @@
 //var AerobicActivity = require('../entities/aerobicActivity')
 //var AnaerobicActivity = require('../entities/anaerobicActivity')
 
+"use strict"
+
 var Activity = require('../entities/activity.js');
 
 function ActivityFactory() {
