@@ -25,12 +25,17 @@ describe('MongoCommon', function(){
 
             db.createCollection(COLLECTION_NAME).then(function(collection){
 
+                // Mongo schema
 
                 db.command( {
                     collMod: COLLECTION_NAME,
-                    //validator: { $or: [ { date: { $exists: true } }, { title: { $exists: true } } ] },
-                    validator: { $or: [ { test: { $exists: true } }  ] },
-                    validationLevel: "moderate"
+                    validator: { $and: 
+                        [
+                            { test: { $exists: true } },
+                            { test:{$type: "string" }}
+                        ]
+                    },
+                    validationLevel: "strict"
                  } )
 
 
@@ -38,7 +43,6 @@ describe('MongoCommon', function(){
             }).catch(function(err){
                     console.log(err);
             })
-            //done();
         });
     });
 
@@ -47,18 +51,18 @@ describe('MongoCommon', function(){
         mongoCommon.init(db, COLLECTION_NAME);
 
         db.collection(COLLECTION_NAME, function(error, collection){
-            collection.deleteMany({}).then(function(){
+            collection.deleteMany({}).then(function(result){
                 done();
             });
         })
+    });
 
-        // db.collections().then(function(collections) {
-        //     async.each(collections, function(collection, singleDone) {
-        //         db.dropCollection(collection.collectionName).then(function(){
-        //             singleDone();
-        //         });
-        //       }, done)
-        //   });
+    after(function(done){
+        db.dropDatabase().then(function(){
+            done();
+        }).catch(function(err){
+            console.log("TEST ERR");
+        })
     });
 
   // test cases
@@ -74,27 +78,7 @@ describe('MongoCommon', function(){
       });
     });
 
-    // describe('#testDBHasTestCollectionAfterAddingDoc', function() {
-    //     it('should return 1 collection', function(done) {
-
-    //         var checkCollectionCount = ()=>{
-    //              db.collections(function(err, collections) {
-    //                  assert.equal(null, err);
-    //                  assert.equal(collections.length, 1);
-    //                  done();
-    //              });
-    //         }
-
-    //         mongoCommon.addDoc({test:"testDoc"})
-    //         .then(function(){
-    //             checkCollectionCount();
-    //         }, function(err){
-    //             console.log(err);
-    //         });  
-    //     });
-    //   });
-
-    describe('#testDBCanAddDoc', function() {
+    describe('#testCanAddDoc', function() {
         it('should return 1 doc', function(done) {
 
             var checkDoc =()=>{ 
@@ -118,41 +102,70 @@ describe('MongoCommon', function(){
         });
     });
 
-    // describe('#testDBAddDocWithNULLvalue', function() {
-    //     it('should not add', function(done) {
+    describe('#testWontAddDocWithWrongSchemaKey', function() {
+        it('should reject', function(done) {
 
-    //         mongoCommon.addDoc({test:null}).then(function(){
-    //         }).catch(function(err){
+            var checkDoc =()=>{ 
+                db.collection(COLLECTION_NAME, {strict:true}, function(err, col) {
+                    col.find({}).toArray().then(function(docs){
+                        assert.equal(docs.length, 0);
+                        done();
+                    })
+                });
+            }
 
-    //             db.collections().then(function(collections){
-    //                 collections.length == 0;
-    //                 done();
-    //             }).catch(function(err){
-    //                 console.log(err);
-    //             })
+            var docToAdd = {INVALID:"testDoc"}
 
-    //         }) 
-    //     });
-    // });
+             mongoCommon.addDoc(docToAdd)
+            .then(function(){
+            }).catch(function(err){
+                checkDoc();
+            });
+        });
+    });
 
-    // describe('#testDBCanAddDocWithNULLKey', function() {
-    //     it('should not add', function(done) {
 
-    //         mongoCommon.addDoc({null:null}).then(function(){
-    //         }).catch(function(err){
+    describe('#testWontAddDocWithNullArgWhenSchemaRequiresString', function() {
+        it('should reject', function(done) {
 
-    //             db.collections().then(function(collections){
-    //                 collections.length == 0;
-    //                 done();
-    //             }).catch(function(err){
-    //                 console.log(err);
-    //             })
+            var checkDoc =()=>{ 
+                db.collection(COLLECTION_NAME, {strict:true}, function(err, col) {
+                    col.find({}).toArray().then(function(docs){
+                        assert.equal(docs.length, 0);
+                        done();
+                    })
+                });
+            }
 
-    //         }) 
-    //     });
-    // });
+            var docToAdd = {test:null}
 
-    describe('#testDBCanAddMultipleDocs', function() {
+             mongoCommon.addDoc(docToAdd)
+            .then(function(){
+            }).catch(function(err){
+                checkDoc();
+            });
+        });
+    });
+
+    describe('#testWontAddDocWithWrongSchemaValue', function() {
+        it('should reject', function(done) {
+
+            var docToAdd = {test:2}
+
+            mongoCommon.addDoc(docToAdd)
+            .then(function(){
+            }).catch(function(err){
+                db.collection(COLLECTION_NAME, {strict:true}, function(err, col) {
+                    col.find({}).toArray().then(function(docs){
+                        assert.equal(docs.length, 0);
+                        done();
+                    })
+                });
+            });
+        });
+    });
+
+    describe('#testCanAddMultipleDocs', function() {
         it('should return 2 docs', function(done) {
 
             var checkDocCount =()=>{ 
@@ -183,17 +196,7 @@ describe('MongoCommon', function(){
         });
     });
 
-    // describe('#testDBCanFetchWhenNoCollectionCreated', function() {
-    //     it('should return 0 doc', function(done) {
-    //         mongoCommon.fetchDocs().then(function(docs){
-    //             assert.equal(docs.length, 0);
-    //             done();
-    //         })
-            
-    //     });
-    // });
-
-    describe('#testDBCanFetchDocs', function() {
+    describe('#testCanFetchDocs', function() {
         it('should return 2 docs', function(done) {
 
             mongoCommon.addDoc({test:"testDoc"}).then(function(){
@@ -209,22 +212,7 @@ describe('MongoCommon', function(){
         });
     });
 
-    // describe('#testDBRemoveDocNoCollection', function() {
-    //     it('should do nothing and give no errors', function(done) {
-    //         mongoCommon.removeDoc({t:2}).then(function(){
-    //             mongoCommon.fetchDocs().then(function(docs){
-    //                 assert.equal(docs.length, 0);
-    //                 done();
-    //             }).catch(function(err){
-    //                 console.log(err);
-    //             })
-                
-    //         })
-            
-    //     });
-    // });
-
-    describe('#testDBRemoveDocEmptyFilter', function() {
+    describe('#testWontRemoveDocPassingEmptyFilter', function() {
         it('should reject', function(done) {
 
             mongoCommon.addDoc({test:"testDoc2"}).then(function(){
@@ -241,8 +229,8 @@ describe('MongoCommon', function(){
         });
     });
 
-    describe('#testDBRemoveDocWithFilter', function() {
-        it('should return 0 doc', function(done) {
+    describe('#testRemoveDoc', function() {
+        it('should remove and collection have 0 docs', function(done) {
 
             mongoCommon.addDoc({test:"testDoc2"}).then(function(){
                 mongoCommon.removeDoc({test: "testDoc2"}).then(function(){
@@ -257,7 +245,7 @@ describe('MongoCommon', function(){
         });
     });
 
-    describe('#testDBDontRemoveDocWithWrongFilter', function() {
+    describe('#testWontRemoveDocWithPassinAWrongFilterValue', function() {
         it('should return 1 doc', function(done) {
 
             mongoCommon.addDoc({test:"testDoc2"}).then(function(){
@@ -273,7 +261,7 @@ describe('MongoCommon', function(){
         });
     });
 
-    describe('#testDBDontRemoveDocWithNullFilterArg', function() {
+    describe('#testWontRemoveDocWithPassingANullFilterArg', function() {
         it('should reject', function(done) {
 
             mongoCommon.addDoc({test:"testDoc2"}).then(function(){
@@ -291,12 +279,11 @@ describe('MongoCommon', function(){
         });
     });
 
-    describe('#testDBRemoveDocWithNullFilterAndNullArg', function() {
+    describe('#testWontRemoveDocPassingANullFilterAndNullArg', function() {
         it('should reject', function(done) {
 
             mongoCommon.addDoc({test:"testDoc2"}).then(function(){
-                mongoCommon.removeDoc({null: null}).then(function(){
-                    
+                mongoCommon.removeDoc({null: null}).then(function(){   
                 }).catch(function(err){
                     mongoCommon.fetchDocs().then(function(docs){
                         assert.equal(docs.length, 1);
@@ -311,7 +298,7 @@ describe('MongoCommon', function(){
         });
     });
 
-    describe('#testDBRemoveDocWithNullFilterAndValidArg', function() {
+    describe('#testWontRemoveDocPassingANullFilterAndValidArg', function() {
         it('should reject', function(done) {
 
             mongoCommon.addDoc({test:"testDoc2"}).then(function(){
@@ -329,18 +316,7 @@ describe('MongoCommon', function(){
         });
     });
 
-    // describe('#testDBUpdateDocNoCollection', function(){
-    //     it('should do nothing, no errors', function(done){
-    //         mongoCommon.updateDoc({}, {}).then(function(){
-    //             mongoCommon.fetchDocs().then(function(docs){
-    //                 assert.equal(docs.length, 0);
-    //                 done();
-    //             })
-    //         });  
-    //     })
-    // })
-
-    describe('#testDBUpdateNonExistentDoc', function(){
+    describe('#testWontUpdateNonExistentDoc', function(){
         it('should do nothing and no errors', function(done){
 
 
@@ -360,7 +336,7 @@ describe('MongoCommon', function(){
         })
     })
 
-    describe('#testDBUpdateNonExistentDocNullFilter', function(){
+    describe('#testWontUpdateNonExistentDocWithNullFilterKey', function(){
         it('should do nothing and no errors', function(done){
 
             var docToAdd = {test:"testValue", a:1};
@@ -379,7 +355,7 @@ describe('MongoCommon', function(){
         })
     })
 
-    describe('#testDBUpdateNonExistentDocNullFilterValue', function(){
+    describe('#testWontUpdateNonExistentDocNullFilterValue', function(){
         it('should do nothing and no errors', function(done){
 
             var docToAdd = {test:"testValue", a:1};
@@ -398,28 +374,7 @@ describe('MongoCommon', function(){
         })
     })
 
-    // describe('#testDBUpdateExistentDocNullValue', function(){
-    //     it('should reject', function(done){
-
-    //         var docToAdd = {testKey:"testValue", a:1};
-    //         var existentDoc = {testKey:"testValue"};
-    //         var updateParams = {a:null};
-
-    //         mongoCommon.addDoc(docToAdd).then(function(){
-    //             mongoCommon.updateDoc(existentDoc, updateParams).then(function(){
-    //             }).catch(function(err){
-    //                 mongoCommon.fetchDocs().then(function(docs){
-    //                     assert.equal(docs.length, 1);
-    //                     assert.equal(docs[0].a, 1);
-    //                     done();
-    //                 })
-    //             });
-    //         })
-    //     })
-    // })
-    
-
-    describe('#testDBUpdateExistentDoc', function(){
+    describe('#testUpdateExistentDocAddingNewField', function(){
         it('should do nothing and no errors', function(done){
 
             var docToAdd = {test:"testValue", a:1};
@@ -432,6 +387,39 @@ describe('MongoCommon', function(){
                         assert.equal(docs[0].a, 2);
                         done();
                     })
+                });
+            })
+        })
+    })
+
+    describe('#testUpdateExistentDoc', function(){
+        it('should do nothing and no errors', function(done){
+
+            var docToAdd = {test:"testValue", a:1};
+            var nonExistentDoc = {test:"testValue"};
+
+            mongoCommon.addDoc(docToAdd).then(function(){
+                mongoCommon.updateDoc(nonExistentDoc, {test:"test"}).then(function(){
+                    mongoCommon.fetchDocs().then(function(docs){
+                        assert.equal(docs.length, 1);
+                        assert.equal(docs[0].test, "test");
+                        done();
+                    })
+                });
+            })
+        })
+    })
+
+    describe('#testWontUpdateDocPassingAnInvalidWrongSchema', function(){
+        it('should do nothing and no errors', function(done){
+
+            var docToAdd = {test:"testValue", a:1};
+            var nonExistentDoc = {test:"testValue"};
+
+            mongoCommon.addDoc(docToAdd).then(function(){
+                mongoCommon.updateDoc(nonExistentDoc, {test:2}).then(function(){
+                }).catch(function(err){
+                    done();
                 });
             })
         })
