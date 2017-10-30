@@ -28,34 +28,51 @@ var ActivitiesController = function ActivitiesController(){
 
         router.get('/activities', function(req, res, next) {
             return new Promise(function(resolve,reject) {
-                activitiesUseCaseInteractor.getActivities().then(function(result){
-                    res.send(result);
+                activitiesUseCaseInteractor.getActivities().then(function(response){
+                    res.send(response);
                     resolve();
                 }).catch(function(err){
-                    //res.status(500).send(err);
+                    res.status(500).send(err);
+                    reject(err);
                 })
             });
-            //sendActivities(res);
         });
 
-        // router.post('/activities/add', function(req, res, next) {
+        router.post('/activities/add', function(req, res, next) {
+            return new Promise(function(resolve, reject) {
+                activitiesUseCaseInteractor.addActivity(req.body).then(function(){
+                    res.status(200).send("Activity added");
+                    resolve();
+                }).catch(function(err){
+                    res.status(500).send(err);
+                    reject(err);
+                })
+            });
+        });
 
-        //     activitiesUseCaseInteractor.addActivity(req.body, ()=>{
-        //         sendActivities(res);
-        //     });
-        // });
+        router.post('/activities/update', function(req, res, next) {
+            return new Promise(function(resolve, reject) {
+                activitiesUseCaseInteractor.updateActivity(req.body).then(function(){
+                    res.status(200).send("Activity updated");
+                    resolve();
+                }).catch(function(err){
+                    res.status(500).send(err);
+                    reject(err);
+                })
+            });
+        });
 
-        // router.post('/activities/remove', function(req, res, next){
-        //     var requestModel = {
-        //         ISOStringDate: req.body.ISOStringDate,
-        //         title: req.body.title
-        //     }
-
-        //     activitiesUseCaseInteractor.removeActivity(requestModel, ()=> {
-        //         sendActivities(res);
-        //     });
-
-        // });
+        router.post('/activities/remove', function(req, res, next){
+            return new Promise(function(resolve, reject) {
+                activitiesUseCaseInteractor.removeActivity(req.body).then(function(){
+                    res.status(200).send("Activity removed");
+                    resolve();
+                }).catch(function(err){
+                    res.status(500).send(err);
+                    reject(err);
+                })
+            });
+        });
     }
 
     return {
