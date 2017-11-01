@@ -1,3 +1,5 @@
+"use strict"
+
 var ActivityFactory = require('../services/activityFactory');
 var MongoCommon = require('./mongoCommon');
 
@@ -16,10 +18,10 @@ var ActivityRepositoryMongoDB = function() {
     function addActivity(activity) {
         var p = new Promise(function(resolve, reject) {
             var doc = activity.toObjLiteral();
-            mongoCommon.addDoc(doc).then(function(){
+                mongoCommon.addDoc(doc).then(function(){
                 resolve();
             }).catch(function(err){
-                reject(err);
+                reject(new Error("CannotAddError: cannot add the required activity."));
             })
         })
 
@@ -33,7 +35,7 @@ var ActivityRepositoryMongoDB = function() {
             mongoCommon.removeDoc(filter).then(function(){
                 resolve();
             }).catch(function(err){
-                reject(err);
+                reject(new Error("CannotRemoveError: cannot remove activity with date " + date + " and title " + title + "."));
             });
         });
 
@@ -49,7 +51,7 @@ var ActivityRepositoryMongoDB = function() {
 
                 resolve(activities);
             }).catch(function(err){
-                reject(err);
+                reject(new Error("CannotFetchError: cannot fetch activities."));
             })
         })
         
@@ -64,7 +66,7 @@ var ActivityRepositoryMongoDB = function() {
             mongoCommon.updateDoc(filter, paramsToUpdate).then(function(){
                 resolve();
             }).catch(function(err){
-                reject(err);
+                reject(new Error("CannotUpdateError: cannot update the required activity."));
             });
         })
     }
@@ -81,3 +83,4 @@ var ActivityRepositoryMongoDB = function() {
 }
 
 module.exports = ActivityRepositoryMongoDB;
+//module.exports = CannotAdd;

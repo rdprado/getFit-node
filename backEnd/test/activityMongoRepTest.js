@@ -182,6 +182,12 @@ describe('ActivityRepositoryMongoTest', function() {
             }).catch(function(err){
                 assert.equal(mongoCommonSpyError.spied().addDocCalled, true);
                 assert.equal(mongoCommonSpyError.spied().addedDoc, null);
+
+
+                assert.equal(err instanceof Error, true);
+                assert.equal(err.message != "", true);
+
+
                 done();
             });
 
@@ -191,7 +197,7 @@ describe('ActivityRepositoryMongoTest', function() {
     describe('#testAddActivityNotPassingActivity', function() {
         it('should not add, reject promise with error', function(done) {
 
-            activityRepo.addActivity({}).then(function(){
+            activityRepo.addActivity({v:"v"}).then(function(){
             }).catch(function(err){
                 assert.equal(mongoCommonSpy.spied().addDocCalled, 0);
                 done();
@@ -222,6 +228,8 @@ describe('ActivityRepositoryMongoTest', function() {
             activityRepo.removeActivity(new Date(), "title").then(function(){
             }).catch(function(err){
                 assert.equal(mongoCommonSpyError.spied().removeDocCalled, true);
+                assert.equal(err instanceof Error, true);
+                assert.equal(err.message != "", true);
                 done();
             });
         })
@@ -253,6 +261,8 @@ describe('ActivityRepositoryMongoTest', function() {
             activityRepo.updateActivity(activity).then(function(){
             }).catch(function(err){
                 assert.equal(mongoCommonSpyError.spied().updateDocCalled, true);
+                assert.equal(err instanceof Error, true);
+                assert.equal(err.message != "", true);
                 done();
             });
         })
@@ -306,6 +316,8 @@ describe('ActivityRepositoryMongoTest', function() {
             activityRepo.fetchActivities().then(function(activities){
             }).catch(function(err){
                 assert.equal(mongoCommonSpyError.spied().fetchDocsCalled, true);
+                assert.equal(err instanceof Error, true);
+                assert.equal(err.message != "", true);
                 done();
             });
             
