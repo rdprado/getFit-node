@@ -7,7 +7,7 @@ var ActivitiesUseCaseInteractor = require('./src/scenes/activitiesUseCaseInterac
 var ActivitiesController = require('./src/scenes/activitiesController')
 var ActivitiesPresenter = require('./src/scenes/activitiesPresenter')
 
-exports.inject = function(router) {
+exports.inject = function(router, done) {
 
     DBStarter.start((db)=>{    
         var activityRepository = ActivityRepositoryMongoDB();
@@ -20,7 +20,11 @@ exports.inject = function(router) {
         activitiesUseCaseInteractor.init(activityRepository, activitiesPresenter);
 
         var activitiesController = ActivitiesController();
-        activitiesController.init(router, activitiesUseCaseInteractor)        
+        activitiesController.init(router, activitiesUseCaseInteractor)
+        
+        console.log("Injected dependencies...")
+
+        done();
     });
 
 }

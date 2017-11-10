@@ -31,14 +31,15 @@ exports.start = function (done) {
                             validationLevel: "strict"
                             } )
                 
-                
+                        console.log("DB started, created base collection...");
                         
                         done(db);
-                        console.log("Server ready");
+                        
                     }).catch(function(err){
                             console.log(err);
                     })
                 } else {
+                    console.log("DB started...");
                     done(db);
                 }
             });
