@@ -16,12 +16,7 @@ describe('MongoCommon', function(){
 
         var url = 'mongodb://localhost:27017/testdb';
         MongoClient.connect(url, function(err, database) {
-            if (err) {
-                return done(err);
-            }
-
             db = database;
-
 
             db.createCollection(COLLECTION_NAME).then(function(collection){
 
@@ -61,7 +56,7 @@ describe('MongoCommon', function(){
         db.dropDatabase().then(function(){
             done();
         }).catch(function(err){
-            console.log("TEST ERR");
+            console.log("TEST ERR " + err);
         })
     });
 

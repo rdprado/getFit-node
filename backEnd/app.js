@@ -2,9 +2,6 @@ var express = require('express');
 var morgan = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var mongo = require('mongodb');
-var MongoClient = require('mongodb').MongoClient
-var assert = require('assert');
 
 var app = express();
 var router = express.Router();
@@ -14,16 +11,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 
-// Connection URL
-var url = 'mongodb://localhost:27017/mydb';
-MongoClient.connect(url, function(err, database) {
+start();
 
-    assert.equal(null, err);
-    start(database);
-    console.log("Server ready");
-});
-
-function start(db) {
+function start() {
 
     /* GET home page. */
     router.get('/', function(req, res, next) {
@@ -37,7 +27,7 @@ function start(db) {
 
     // Custom routes
     var injector = require('./injector')
-    injector.inject(router, db);
+    injector.inject(router);
 
     app.use(router);
 

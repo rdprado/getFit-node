@@ -1,19 +1,27 @@
+var MongoCommon = require('./src/services/mongoCommon');
+
 var ActivityRepositoryMongoDB = require('./src/services/activityRepositoryMongoDB')
+var DBStarter = require('./DBStarter')
 
 var ActivitiesUseCaseInteractor = require('./src/scenes/activitiesUseCaseInteractor')
 var ActivitiesController = require('./src/scenes/activitiesController')
 var ActivitiesPresenter = require('./src/scenes/activitiesPresenter')
 
-exports.inject = function(router, db) {
-    var activityRepository = ActivityRepositoryMongoDB();
-    activityRepository.init(db);
+exports.inject = function(router) {
 
-    var activitiesPresenter = ActivitiesPresenter();
+    DBStarter.start((db)=>{    
+        var activityRepository = ActivityRepositoryMongoDB();
+        var mongoCommon = MongoCommon();
+        activityRepository.init(db, mongoCommon);
 
-    var activitiesUseCaseInteractor = ActivitiesUseCaseInteractor();
-    activitiesUseCaseInteractor.init(activityRepository, activitiesPresenter);
+        var activitiesPresenter = ActivitiesPresenter();
 
-    var activitiesController = ActivitiesController();
-    activitiesController.init(router, activitiesUseCaseInteractor)
+        var activitiesUseCaseInteractor = ActivitiesUseCaseInteractor();
+        activitiesUseCaseInteractor.init(activityRepository, activitiesPresenter);
+
+        var activitiesController = ActivitiesController();
+        activitiesController.init(router, activitiesUseCaseInteractor)        
+    });
+
 }
 
